@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.net.URL;
 import java.util.Scanner;
 import java.sql.*;
 import java.sql.DriverManager;
@@ -8,14 +9,15 @@ import java.util.Scanner;
 public class MyConnection {
     public static void main(String[] args) throws FileNotFoundException {
         String MySQLURL = "jdbc:mysql://localhost:3306/salesSmall?useSSL=false";
-        File file = new File("./login.txt");
+
+        //get the current connection
+        URL path = MyConnection.class.getResource("login.txt");
+        File file = new File(path.getFile());
         Scanner sc = new Scanner(file);
-        sc.useDelimiter(sc.next());
+        sc.useDelimiter(" ");
 
-        System.out.println();
-
-        String databaseUserName = "root";
-        String databasePassword = "Pok3mon4evr!";
+        String databaseUserName = sc.next();
+        String databasePassword = sc.next();
         Connection con = null;
 //        Statement stmt = con.createStatement();
         ResultSet resultSet = null;
@@ -26,8 +28,7 @@ public class MyConnection {
             // open connection
             con = DriverManager.getConnection(MySQLURL, databaseUserName, databasePassword);
             if (con != null) {
-            	 Statement stmt = con.createStatement();
-//                System.out.println("Database connection is successful !!!!");
+                Statement stmt = con.createStatement();
                 query = "SELECT P_CODE FROM salesSmall.PRODUCT";
                 resultSet = stmt.executeQuery(query);
 

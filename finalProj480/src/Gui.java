@@ -168,6 +168,11 @@ public class Gui extends Application {
         return new Scene(pane, 1200, 800);
     }
 
+    public void addToGenre(){
+        genresList = new ComboBox<>();
+        genresList.getItems().addAll();
+    }
+
     //scene to keep record of the options
 	public Scene optionsScene() {
         BorderPane pane = new BorderPane();
@@ -181,7 +186,7 @@ public class Gui extends Application {
         t2.setFont(Font.font("Monospace", FontWeight.BOLD, 20));
         t2.setFill(Color.web("#401921"));
 
-        genresList = new ComboBox<>();
+
 
         //ratings - text and declare comboBox
         Text t3 = new Text(550, 20, "What range of ratings? \n");
