@@ -1,9 +1,7 @@
 import java.sql.*;
-import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 
-public class Connection {
+public class MyConnection {
     public static void main(String[] args) {
         String MySQLURL = "jdbc:mysql://localhost:3306/salesSmall?useSSL=false";
         String databseUserName = "root";
@@ -22,7 +20,7 @@ public class Connection {
 //                System.out.println("Database connection is successful !!!!");
                 query = "SELECT P_CODE FROM salesSmall.PRODUCT";
                 resultSet = stmt.executeQuery(query);
-                
+
                 while (resultSet.next()) {
                     System.out.println(resultSet.getString("P_CODE"));
 
