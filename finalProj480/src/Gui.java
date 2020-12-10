@@ -1,7 +1,5 @@
 import java.io.FileNotFoundException;
-import java.sql.SQLException;
 import java.util.HashMap;
-
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -18,23 +16,36 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
-import javax.swing.*;
-
 public class Gui extends Application {
+    // Map that holds the scenes of the application
     HashMap<String, Scene> sceneMap;
-    Button start, logIn, findShows, cont, back;
-    ComboBox<String> genresList, ratingsRange, platformsList, ageRanges;
-    TextField userName, password;
-    String holdLogInStmt, chosenGenre, chosenAge, chosenPlatform, chosenRating;
-    Text title, description, genre, IMBD, rottenScore, age, released, seasons, stream;
-    Text listOfMovies;
-    Text logInErrorStmt;
-    private MenuBar menuBar;
-    private Menu menu;
-    private MenuItem myMovies;
 
+    // Buttons to continue through the application
+    Button start, logIn, findShows, cont, back;
+
+    // Comboboxes to make selections
+    ComboBox<String> genresList, ratingsRange, platformsList, ageRanges;
+
+    // Textfields to enter user name and password
+    TextField userName, password;
+
+    // String to update the texts
+    String holdLogInStmt, chosenGenre, chosenAge, chosenPlatform, chosenRating;
+
+    // Texts to display the results
+    Text title, description, genre, IMBD, rottenScore, age, released, seasons, stream;
+    Text logInErrorStmt;
+
+    // VBox to hold shows for a specific account
+    VBox listOfShows;
+
+    // Menu bar
+    MenuBar menuBar;
+    Menu menu;
+    MenuItem myShows;
+
+    // MyConnection object called connect
     MyConnection connect = new MyConnection();
-    HashMap<String, String> userPassList = new HashMap<String, String>();
 
     public static void main(String[] args) {
         // TODO Auto-generated method stub
@@ -46,13 +57,13 @@ public class Gui extends Application {
         // TODO Auto-generated method stub
         primaryStage.setTitle("Look for TV shows to watch");
 
+        // Initialize the HashMap
         sceneMap = new HashMap<String,Scene>();
 
-        Scene scene = new Scene(new HBox(), 600, 600);
-        primaryStage.setScene(scene);
+        // Show the primaryStage
         primaryStage.show();
 
-        //buttons: logIn, start, findShows
+        // Buttons: logIn, start, findShows, cont, back
         start = new Button("START LOOKING");
         start.setStyle("-fx-background-color: SNOW;");
         logIn = new Button("LOG IN");
@@ -61,48 +72,46 @@ public class Gui extends Application {
         findShows.setStyle("-fx-background-color: SNOW;");
         cont = new Button("CONTINUE");
         cont.setStyle("-fx-background-color: SNOW;");
-        menuBar = new MenuBar();
-        menu = new Menu("MENU");
-        myMovies = new MenuItem("MY MOVIES");
-        menu.getItems().addAll(myMovies);
-        menuBar.getMenus().add(menu);
-        menuBar.setStyle("-fx-background-color: FLORALWHITE;");
         back = new Button("BACK");
 
-        //change scene at start
+        // Menu
+        menuBar = new MenuBar();
+        menu = new Menu("MENU");
+        myShows = new MenuItem("MY SHOWS");
+        menu.getItems().addAll(myShows);
+        menuBar.getMenus().add(menu);
+        menuBar.setStyle("-fx-background-color: FLORALWHITE;");
+
+        // Change scene to start
         start.setOnAction(e -> {
-                    primaryStage.setScene(sceneMap.get("logIn"));
-                    try {
-                        connect.connect();
-                    } catch (FileNotFoundException fileNotFoundException) {
-                        fileNotFoundException.printStackTrace();
-                    }
-                }
 
-        );
+            // Set to the login scene
+            primaryStage.setScene(sceneMap.get("logIn"));
 
-        //after login is clicked
+            // Try to connect to SQL
+            try {
+                connect.connect();
+            } catch (FileNotFoundException fileNotFoundException) {
+                fileNotFoundException.printStackTrace();
+            }
+        });
+
+        // After login is clicked
         logIn.setOnAction(e -> {
-                    //get the inputs of user and pass
+                    // Get the inputs of user and pass
                     String userInput = userName.getText();
                     String passInput = password.getText();
 
-                    System.out.println("Username: " + userInput);
-                    System.out.println("Password: " + passInput);
-
-                    //look for user and password
+                    //Look for user and password
                     Boolean foundUser = connect.lookForUser(userInput);
                     Boolean correctPass = connect.checkPass(userInput, passInput);
 
-                    System.out.println("Username found? " + foundUser);
-                    System.out.println("Password found? " + correctPass);
-
-                    //if one of the inputs are empty then print a empty statement
+                    // If one of the inputs are empty then print a empty statement
                     if(passInput.equals("") || userInput.equals("")){
                         holdLogInStmt = "missing an input";
                         logInErrorStmt.setText(holdLogInStmt);
                     }
-                    //if there is none found then add
+                    // If there is none found then add
                     else if(!foundUser){
 
                         connect.addLogIn(userInput, passInput);
@@ -110,13 +119,15 @@ public class Gui extends Application {
 
                         primaryStage.setScene(sceneMap.get("selections"));
                     }
-                    //else if password doesn't, match print error message
+
+                    // Else if password doesn't, match print error message
                     else if(foundUser && !correctPass){
                         holdLogInStmt = "password is wrong";
                         System.out.println("Password is wrong");
                         logInErrorStmt.setText(holdLogInStmt);
                     }
-                    //else if user and pass is same go to next scene
+
+                    // Else if user and pass is same go to next scene
                     else if(foundUser && correctPass){
                         System.out.println("correct user and pass");
                         primaryStage.setScene(sceneMap.get("selections"));
@@ -125,28 +136,36 @@ public class Gui extends Application {
                 }
         );
 
+        // When the find shows button is clicked
         findShows.setOnAction(e-> {
+            // Get to the recommendations scene
             primaryStage.setScene(sceneMap.get("recommendations"));
-            System.out.println("chosen platform: " + chosenPlatform);
-            System.out.println("chosen genre: " + chosenGenre);
-            System.out.println("chosen rating: " + chosenRating);
-            System.out.println("chosen age: " + chosenAge);
+
+            // Update the query string by calling functions and execute it
             connect.getPlatform(chosenPlatform);
             connect.getGenre(chosenGenre);
             connect.getRange(chosenRating);
             connect.getContent(chosenAge);
             connect.runQuery();
-            connect.pickOne();
+            connect.updateAccount();
+            // Update text after getting the results
             updateText(connect.getTitle(), connect.getReleased(), connect.getAge(), connect.getIMBD(), connect.getRotten(),
-                    connect.getGenre(), connect.getDescription(), connect.getSeasons(), connect.getStream(), connect.getMovieTitleLogin());
+                    connect.getGenre(), connect.getDescription(), connect.getSeasons(), connect.getStream());
+
+            // Clear for the next pick
             connect.clear();
         });
 
+        // Continue button is clicked
         cont.setOnAction(e-> {
+
+            // Clear the selections for the comboboxes
             genresList.getSelectionModel().clearSelection();
             ratingsRange.getSelectionModel().clearSelection();
             platformsList.getSelectionModel().clearSelection();
             ageRanges.getSelectionModel().clearSelection();
+
+            // Reset the texts to empty
             title.setText("");
             description.setText("");
             genre.setText("");
@@ -156,32 +175,43 @@ public class Gui extends Application {
             released.setText("");
             seasons.setText("");
             stream.setText("");
+
+            // Get the selections scene once more
             primaryStage.setScene(sceneMap.get("selections"));
         });
 
-        myMovies.setOnAction(e -> {
+        // My Shows menu itme is clicked
+        myShows.setOnAction(e -> {
+            updateShowsList(connect.getTitleLogin(), primaryStage);
+            // Go to the movies scene
             primaryStage.setScene(sceneMap.get("movies"));
         });
 
+        // Back is clicked from the movies scene
         back.setOnAction(e -> {
+            listOfShows.getChildren().clear();
+            // Return back to the selections scene
             primaryStage.setScene(sceneMap.get("selections"));
         });
 
+        // Put all the scenes onto the map
         sceneMap.put("start", startScene());
         sceneMap.put("logIn", logInScene());
         sceneMap.put("selections", optionsScene());
         sceneMap.put("recommendations", showsScene());
-        sceneMap.put("movies", myMoviesScene());
+        sceneMap.put("movies", myShowsScene());
 
+        // Set the scene to start scene
         primaryStage.setScene(sceneMap.get("start"));
-
     }
 
-    //start scene
+    // Start scene
     public Scene startScene() {
+
+        // BorderPane for layout
         BorderPane pane = new BorderPane();
 
-        //welcome text
+        // Set and format the welcome texts
         Text t = new Text("LOOKING FOR A SHOW?");
         t.setFont(Font.font("Helvetica", FontWeight.BOLD, 30));
         t.setTextAlignment(TextAlignment.CENTER);
@@ -193,7 +223,7 @@ public class Gui extends Application {
         t2.setFill(Color.BURLYWOOD);
 
 
-        //organize with vbox
+        // Organize with vbox
         VBox paneCenter = new VBox(10, t, t2, start);
         paneCenter.setPadding(new Insets(100));
         paneCenter.setAlignment(Pos.CENTER);
@@ -201,53 +231,59 @@ public class Gui extends Application {
         addToGenre();
         pane.setCenter(paneCenter);
 
+        // Return scene
         return new Scene(pane, 700, 700);
     }
 
-    //log into your account to get the list of shows already watched
+    // Set up scene to log into your account to get the list of shows already watched
     public Scene logInScene(){
+        // Set up the borderpane for layout
         BorderPane pane = new BorderPane();
 
-        //username text before text field
+        // Username text before text field
         Text user = new Text("UserName: \n");
         user.setFont(Font.font("Helvetica", FontWeight.BOLD, 20));
         user.setFill(Color.SEAGREEN);
 
-        //password text before text field
+        // Password text before text field
         Text pass = new Text("Password: \n");
         pass.setFont(Font.font("Helvetica", FontWeight.BOLD, 20));
         pass.setFill(Color.SEAGREEN);
 
-        //initialize text fields
+        // Initialize text fields
         userName = new TextField();
         userName.setMaxWidth(300);
         password = new TextField();
 
-        //hBox - userName
+        // HBox - userName
         HBox holdUser = new HBox(10, user, userName);
         holdUser.setPadding(new Insets(10));
         holdUser.setAlignment(Pos.CENTER);
 
-        //hBox - password
+        // HBox - password
         HBox holdPass = new HBox(10, pass, password);
         holdPass.setPadding(new Insets(10));
         holdPass.setAlignment(Pos.CENTER);
 
+        // Set up the error statement
         logInErrorStmt = new Text();
         logInErrorStmt.setFont(Font.font("Helvetica", FontWeight.SEMI_BOLD, 15));
         logInErrorStmt.setFill(Color.MINTCREAM);
 
-        //vBox - vertical box to keep user and pass
+        // VBox - vertical box to keep user and pass
         VBox paneCenter = new VBox(10, holdUser, holdPass, logIn, logInErrorStmt);
         paneCenter.setPadding(new Insets(10));
         paneCenter.setAlignment(Pos.CENTER);
 
+        // Set the layout with VBox and BorderPane
         pane.setCenter(paneCenter);
         pane.setStyle("-fx-background-color: thistle;");
 
+        // Return the scenes
         return new Scene(pane, 700, 700);
     }
 
+    // Set up the genre ComboBox
     public void addToGenre(){
         genresList = new ComboBox<>();
         genresList.getItems().addAll("Animation", "Action & Adventure", "Anime", "Biography", "Comedy", "Crime", "Children", "Cult",
@@ -255,31 +291,35 @@ public class Gui extends Application {
                 "Sport", "Travel", "Thriller", "Reality", "Romance", "Stand-up & Talk");
     }
 
+    // Set up the ratings ComboBox
     public void addToRatings(){
         ratingsRange = new ComboBox<>();
         ratingsRange.getItems().addAll("0-4", "5-7", "8-10");
     }
 
+    // Set up the platforms ComboBox
     public void  addToPlatforms(){
         platformsList = new ComboBox<>();
         platformsList.getItems().addAll("Hulu", "Netflix", "Prime Video", "Disney+");
     }
 
+    // Set up the age range ComboBox
     public void addToAge(){
         ageRanges = new ComboBox<>();
         ageRanges.getItems().addAll("18", "16", "7");
     }
 
+    // Update the texts for displaying the results for the show
     public void updateText(String titleStr, String releasedStr, String ageStr, String IMBDStr, String rottenStr,
-                           String genreStr, String descStr, String seasonStr, String streamStr, String movieList) {
-        System.out.println("titleStr: " + titleStr);
+                           String genreStr, String descStr, String seasonStr, String streamStr) {
 
+        // If the title string did not return null
         if (titleStr != null ) {
+            // Set the title text to be the title passed in
             title.setText("Title: " + titleStr);
-            if (movieList != null) {
-                listOfMovies.setText(movieList);
-            }
 
+            // Set the release year, content rating, IMBD/Rotten scores, description, No of seasons,
+            // and streaming platform to their respective texts
             released.setText("Released Year: " + releasedStr);
             age.setText("Content Rating: " + ageStr);
             IMBD.setText("IMBD Rating: " + IMBDStr);
@@ -289,70 +329,72 @@ public class Gui extends Application {
             String temp = seasonStr;
             String delims = "S";
             String[] tokens = temp.split(delims);
-
             String seasonNum = tokens[0];
             seasons.setText("No. of Seasons: " + seasonNum + " Season(s)");
             stream.setText("Streaming Platform: " + streamStr);
         }
+
+        // TV shows did not match, make title hold the try again message
         else {
             title.setText("No TV Shows Match... Please Try Again!" );
         }
     }
-    
-    //scene to keep record of the options
+
+    // Scene to keep record of the options
     public Scene optionsScene() {
+        // BorderPane for layout
         BorderPane pane = new BorderPane();
 
-        //vbox to organize the items
+        // Vbox to organize the items
         VBox paneCenter = new VBox(10);
         paneCenter.setAlignment(Pos.CENTER);
 
-        //genre - text and declare comboBox
+        // Genre - text and declare comboBox
         Text t2 = new Text(550, 20, "WHAT GENRE ARE YOU INTERESTED IN? \n");
         t2.setFont(Font.font("Helvetica", FontWeight.BOLD, 20));
         t2.setFill(Color.web("#401921"));
         addToGenre();
 
-        //ratings - text and declare comboBox
+        // Ratings - text and declare comboBox
         Text t3 = new Text(550, 20, "WHAT RANGE SHOULD THE RATING BE? \n");
         t3.setFont(Font.font("Helvetica", FontWeight.BOLD, 20));
         t3.setFill(Color.web("#401921"));
         addToRatings();
 
-        //platform - text and declare comboBox
+        // Platform - text and declare comboBox
         Text t4 = new Text(550, 20, "WHAT PLATFORM DO YOU WANT TO WATCH ON? \n");
         t4.setFont(Font.font("Helvetica", FontWeight.BOLD, 20));
         t4.setFill(Color.web("#401921"));
         addToPlatforms();
 
-        //Age - text and declare comboBox
+        // Age - text and declare comboBox
         Text t5 = new Text(550, 20, "WHAT SHOULD BE THE CONTENT RATING? \n");
         t5.setFont(Font.font("Helvetica", FontWeight.BOLD, 20));
         t5.setFill(Color.web("#401921"));
         addToAge();
 
-        //set value chosen from genres list
+        // Set value chosen from genres list
         genresList.setOnAction(e->{
             if(genresList.getValue() != null){
                 chosenGenre = genresList.getValue();
             }
         });
 
-        //set value chosen from ratings list
+        // Set value chosen from ratings list
         ratingsRange.setOnAction(e->{
             if(ratingsRange.getValue() != null){
                 chosenRating = ratingsRange.getValue();
             }
         });
 
-        //set value chosen from age list
+        // Set value chosen from age list
         ageRanges.setOnAction(e->{
             if(ageRanges.getValue() != null){
                 chosenAge = ageRanges.getValue();
             }
         });
 
-        //set value chosen from platform list
+        // Set value chosen from platform list
         platformsList.setOnAction(e->{
             if(platformsList.getValue() != null){
                 chosenPlatform = platformsList.getValue();
@@ -360,25 +402,29 @@ public class Gui extends Application {
         });
 
 
-        //all items to vbox and reset pane
+        // All items to vbox and reset pane
         paneCenter.getChildren().addAll(t4, platformsList, t2, genresList, t3, ratingsRange, t5, ageRanges, findShows);
         pane.setStyle("-fx-background-color:#ad8989");
         pane.setTop(menuBar);
         pane.setCenter(paneCenter);
 
+        // Return the scene
         return new Scene(pane, 700, 700);
-
     }
 
-    //shows the recommended shows scene
+    // Shows the recommended shows scene
     public Scene showsScene(){
+
+        // BorderPane for layout
         BorderPane pane = new BorderPane();
 
-        //header text
+        // Header text
         Text rec = new Text(550, 20, "HERE IS YOUR RECOMMENDATION: \n");
         rec.setFont(Font.font("Helvetica", FontWeight.BOLD, 30));
         rec.setFill(Color.FLORALWHITE);
 
+        // Title, released, age, IMBD, rottenScore, genre, description, seasons, and stream
+        // texts initialized
         title = new Text();
         title.setFont(Font.font("Helvetica", FontWeight.BOLD, 20));
         title.setFill(Color.OLDLACE);
@@ -416,32 +462,88 @@ public class Gui extends Application {
         stream.setFont(Font.font("Helvetica", FontWeight.BOLD, 14));
         stream.setFill(Color.PAPAYAWHIP);
 
-        //vbox to organize
-        VBox paneCenter = new VBox(10, rec, title, released, age, rottenScore, genre, description, seasons, stream, cont);
+        // Vbox to organize
+        VBox paneCenter = new VBox(10, rec, title, released, age, IMBD, rottenScore, genre, description, seasons, stream, cont);
         paneCenter.setAlignment(Pos.CENTER);
         pane.setCenter(paneCenter);
         pane.setStyle("-fx-background-color: LIGHTSTEELBLUE;");
+
+        // Return scene
         return new Scene(pane, 700, 700);
     }
 
-    public Scene myMoviesScene() {
-        Text moviesHeader = new Text("LIST OF MOVIES");
-        moviesHeader.setFont(Font.font("Helvetica",FontWeight.BOLD,20));
-        moviesHeader.setFill(Color.BURLYWOOD);
+    // MyShowsScene is the scene that holds all the shows that your account saved
+    public Scene myShowsScene() {
+        // Header to prompt list of shows
+        Text showsHeader = new Text("LIST OF YOUR SHOWS");
+        showsHeader.setFont(Font.font("Helvetica",FontWeight.BOLD,20));
+        showsHeader.setFill(Color.BURLYWOOD);
 
-        listOfMovies = new Text(" ");
-        listOfMovies.setFont(Font.font("Helvetica",FontWeight.BOLD,14));
-        listOfMovies.setFill(Color.BURLYWOOD);
+        // listOfShows VBox that will hold the list of shows saved
+        listOfShows = new VBox();
+        listOfShows.setAlignment(Pos.CENTER);
 
+        // Back button
         back.setStyle("-fx-background-color: FLORALWHITE;");
 
-        VBox pane = new VBox(moviesHeader, listOfMovies, back);
-        pane.setSpacing(40.0);
+        // VBox for organization
+        VBox pane = new VBox(showsHeader, listOfShows, back);
+        pane.setSpacing(50.0);
         pane.setAlignment(Pos.CENTER);
 
+        // BorderPane for organization
         BorderPane bPane = new BorderPane();
         bPane.setCenter(pane);
         bPane.setStyle("-fx-background-color: MISTYROSE;");
+
+        // Return the scene
         return new Scene(bPane, 700, 700);
     }
+
+    // Function that will update the text for the list of shows
+    public void updateShowsList(String showList, Stage primaryStage) {
+        // If the showList is not null, update the text listOfShows
+        if (showList != null) {
+            // Split up the result showList into separate strings for the titles
+            String temp = showList;
+            String delims = "\n";
+            String[] tokens = temp.split(delims);
+
+            // Loop through the tokens array
+            for ( int i = 0; i < tokens.length; i++){
+                String tempStr = tokens[i];
+
+                // For each title, make a text to display
+                Text showTitle = new Text(tempStr);
+                showTitle.setFont(Font.font("Helvetica",FontWeight.BOLD,14));
+                showTitle.setFill(Color.BURLYWOOD);
+                showTitle.setTextAlignment(TextAlignment.LEFT);
+
+                // Make a button for information for that show
+                Button b = new Button("INFO");
+                b.setStyle("-fx-background-color: SNOW;");
+
+                // If that button is clicked, go to the recommendations screen that holds the show's info
+                b.setOnAction(e-> {
+                    // Call search
+                    connect.search(tempStr);
+
+                    // Update the texts
+                    updateText(connect.getTitle(), connect.getReleased(), connect.getAge(), connect.getIMBD(), connect.getRotten(),
+                            connect.getGenre(), connect.getDescription(), connect.getSeasons(), connect.getStream());
+                    listOfShows.getChildren().clear();
+                    primaryStage.setScene(sceneMap.get("recommendations"));
+                });
+
+                // HBox that holds a show's title and info button
+                HBox titleButton = new HBox(showTitle, b);
+                titleButton.setAlignment(Pos.CENTER);
+                titleButton.setSpacing(30.0);
+
+                // Add the HBox to the listOfShows VBox
+                listOfShows.getChildren().addAll(titleButton);
+            }
+        }
+    }
+
 }
