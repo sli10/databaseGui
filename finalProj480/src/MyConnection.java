@@ -39,7 +39,7 @@ public class MyConnection {
         try {
             if (con != null) {
                 Statement stmt = con.createStatement();
-                query = "SELECT * FROM tvShows.Shows";
+                query = "SELECT * FROM tvShows.shows";
                 resultSet = stmt.executeQuery(query);
 
                 while (resultSet.next()) {

@@ -24,10 +24,10 @@ import javax.swing.*;
 
 public class Gui extends Application {
     HashMap<String, Scene> sceneMap;
-    Button start, logIn;
+    Button start, logIn, findShows;
     ComboBox<String> genresList, ratingsRange, platformsList, ageRanges;
     TextField userName, password;
-    String holdLogInStmt;
+    String holdLogInStmt, chosenGenre, chosenAge, chosenPlatform, chosenRating;
     Text logInErrorStmt;
     MyConnection connect = new MyConnection();
     HashMap<String, String> userPassList = new HashMap<String, String>();
@@ -48,9 +48,10 @@ public class Gui extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        //buttons: logIn, start
+        //buttons: logIn, start, findShows
         start = new Button("Start Looking");
         logIn = new Button("Log In");
+        findShows = new Button("Find Shows");
 
         //change scene at start
 		start.setOnAction(e -> {
@@ -99,9 +100,14 @@ public class Gui extends Application {
 		    }
         );
 
+		findShows.setOnAction(e-> {
+            primaryStage.setScene(sceneMap.get("recommendations"));
+        });
+
         sceneMap.put("start", startScene());
         sceneMap.put("logIn", logInScene());
         sceneMap.put("selections", optionsScene());
+        sceneMap.put("recommendations", showsScene());
 
         primaryStage.setScene(sceneMap.get("start"));
 
@@ -207,8 +213,7 @@ public class Gui extends Application {
         Text t2 = new Text(550, 20, "What genre are you interested in? \n");
         t2.setFont(Font.font("Monospace", FontWeight.BOLD, 20));
         t2.setFill(Color.web("#401921"));
-
-        genresList = new ComboBox<>();
+        addToGenre();
 
         //ratings - text and declare comboBox
         Text t3 = new Text(550, 20, "What range of ratings? \n");
@@ -228,12 +233,59 @@ public class Gui extends Application {
         t5.setFill(Color.web("#401921"));
         addToAge();
 
+        //set value chosen from genres list
+        genresList.setOnAction(e->{
+            if(genresList.getValue() != null){
+                chosenGenre = genresList.getValue();
+            }
+        });
+
+        //set value chosen from ratings list
+        ratingsRange.setOnAction(e->{
+            if(ratingsRange.getValue() != null){
+                chosenRating = ratingsRange.getValue();
+            }
+        });
+
+        //set value chosen from age list
+        ageRanges.setOnAction(e->{
+            if(ageRanges.getValue() != null){
+                chosenAge = ageRanges.getValue();
+            }
+        });
+
+        //set value chosen from platform list
+        platformsList.setOnAction(e->{
+            if(platformsList.getValue() != null){
+                chosenPlatform = platformsList.getValue();
+            }
+        });
+
+
         //all items to vbox and reset pane
-        paneCenter.getChildren().addAll(t4, platformsList, t2, genresList, t3, ratingsRange, t5, ageRanges);
+        paneCenter.getChildren().addAll(t4, platformsList, t2, genresList, t3, ratingsRange, t5, ageRanges, findShows);
         pane.setTop(paneCenter);
         pane.setStyle("-fx-background-color:#ad8989");
 
         return new Scene(pane, 1000, 800);
 
 	}
+
+	//shows the recommended shows scene
+	public Scene showsScene(){
+        BorderPane pane = new BorderPane();
+
+        //header text
+        Text rec = new Text(550, 20, "Here Are Your Recommendations: \n");
+        rec.setFont(Font.font("Monospace", FontWeight.BOLD, 20));
+        rec.setFill(Color.web("#401921"));
+
+        //vbox to organize
+        VBox paneCenter = new VBox(10, rec);
+        pane.setTop(paneCenter);
+        pane.setStyle("-fx-background-color:#ad8989");
+
+        return new Scene(pane, 1000, 800);
+    }
+
 }
