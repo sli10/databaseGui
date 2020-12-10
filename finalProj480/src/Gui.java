@@ -123,8 +123,7 @@ public class Gui extends Application {
         VBox paneCenter = new VBox(10, t, start);
         paneCenter.setPadding(new Insets(100));
         paneCenter.setAlignment(Pos.CENTER);
-
-
+        addToGenre();
         pane.setCenter(paneCenter);
 //        pane.setStyle(Color.web("#ffffff"));
 
@@ -149,11 +148,6 @@ public class Gui extends Application {
         userName = new TextField();
         userName.setMaxWidth(300);
         password = new TextField();
-
-        //vBox to organize the items
-//        VBox paneCenter = new VBox(10, user, userName, pass, password);
-//        paneCenter.setPadding(new Insets(100));
-//        paneCenter.setAlignment(Pos.CENTER);
 
         //hBox - userName
         HBox holdUser = new HBox(10, user, userName);
@@ -181,7 +175,24 @@ public class Gui extends Application {
 
     public void addToGenre(){
         genresList = new ComboBox<>();
-        genresList.getItems().addAll();
+        genresList.getItems().addAll("Animation", "Action & Adventure", "Anime", "Biography", "Comedy", "Crime", "Children", "Cult",
+                "Drama", "Documentary", "Fantasy", "Family", "Foods", "Game Show", "History", "Horror", "LGBTQ", "Netflix", "Mystery", "Musical", "Science-Fiction",
+                "Sport", "Travel", "Thriller", "Reality", "Romance", "Stand-up & Talk");
+    }
+
+    public void addToRatings(){
+        ratingsRange = new ComboBox<>();
+        ratingsRange.getItems().addAll("0-4", "5-7", "8-10");
+    }
+
+    public void  addToPlatforms(){
+        platformsList = new ComboBox<>();
+        platformsList.getItems().addAll("Hulu", "Netflix", "Prime Video", "Disney+");
+    }
+
+    public void addToAge(){
+        ageRanges = new ComboBox<>();
+        ageRanges.getItems().addAll("18", "16", "7");
     }
 
     //scene to keep record of the options
@@ -203,22 +214,19 @@ public class Gui extends Application {
         Text t3 = new Text(550, 20, "What range of ratings? \n");
         t3.setFont(Font.font("Monospace", FontWeight.BOLD, 20));
         t3.setFill(Color.web("#401921"));
-
-        ratingsRange = new ComboBox<>();
+        addToRatings();
 
         //platform - text and declare comboBox
         Text t4 = new Text(550, 20, "What platform do you watch on? \n");
         t4.setFont(Font.font("Monospace", FontWeight.BOLD, 20));
         t4.setFill(Color.web("#401921"));
-
-        platformsList = new ComboBox<>();
+        addToPlatforms();
 
         //Age - text and declare comboBox
         Text t5 = new Text(550, 20, "Content Ratings? \n");
         t5.setFont(Font.font("Monospace", FontWeight.BOLD, 20));
         t5.setFill(Color.web("#401921"));
-
-        ageRanges = new ComboBox<>();
+        addToAge();
 
         //all items to vbox and reset pane
         paneCenter.getChildren().addAll(t4, platformsList, t2, genresList, t3, ratingsRange, t5, ageRanges);

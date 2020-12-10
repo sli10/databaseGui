@@ -13,7 +13,7 @@ public class MyConnection {
         String MySQLURL = "jdbc:mysql://localhost:3306/tvShows?useSSL=false";
 
         //get the current connection
-        URL path = MyConnection.class.getResource("connectInfo.txt");
+        URL path = MyConnection.class.getResource("login.txt");
         File file = new File(path.getFile());
         Scanner sc = new Scanner(file);
         sc.useDelimiter(" ");
