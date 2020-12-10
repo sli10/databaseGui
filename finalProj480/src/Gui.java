@@ -1,3 +1,5 @@
+import java.io.FileNotFoundException;
+import java.sql.SQLException;
 import java.util.HashMap;
 
 
@@ -18,15 +20,16 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
+import javax.swing.*;
+
 public class Gui extends Application {
     HashMap<String, Scene> sceneMap;
     Button start, logIn;
     ComboBox<String> genresList, ratingsRange, platformsList, ageRanges;
     TextField userName, password;
-
     String holdLogInStmt;
     Text logInErrorStmt;
-
+    MyConnection connect = new MyConnection();
     HashMap<String, String> userPassList = new HashMap<String, String>();
 
     public static void main(String[] args) {
@@ -50,8 +53,16 @@ public class Gui extends Application {
         logIn = new Button("Log In");
 
         //change scene at start
-		start.setOnAction(e ->
-                primaryStage.setScene(sceneMap.get("logIn"))
+		start.setOnAction(e -> {
+                    primaryStage.setScene(sceneMap.get("logIn"));
+                    try {
+                        connect.connect();
+                        connect.query();
+                    } catch (FileNotFoundException fileNotFoundException) {
+                        fileNotFoundException.printStackTrace();
+                    }
+                }
+
         );
 
 		//after login is clicked
@@ -186,7 +197,7 @@ public class Gui extends Application {
         t2.setFont(Font.font("Monospace", FontWeight.BOLD, 20));
         t2.setFill(Color.web("#401921"));
 
-
+        genresList = new ComboBox<>();
 
         //ratings - text and declare comboBox
         Text t3 = new Text(550, 20, "What range of ratings? \n");
