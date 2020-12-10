@@ -7,9 +7,7 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -24,12 +22,17 @@ import javax.swing.*;
 
 public class Gui extends Application {
     HashMap<String, Scene> sceneMap;
-    Button start, logIn, findShows, cont;
+    Button start, logIn, findShows, cont, back;
     ComboBox<String> genresList, ratingsRange, platformsList, ageRanges;
     TextField userName, password;
     String holdLogInStmt, chosenGenre, chosenAge, chosenPlatform, chosenRating;
     Text title, description, genre, IMBD, rottenScore, age, released, seasons, stream;
+    Text listOfMovies;
     Text logInErrorStmt;
+    private MenuBar menuBar;
+    private Menu menu;
+    private MenuItem myMovies;
+
     MyConnection connect = new MyConnection();
     HashMap<String, String> userPassList = new HashMap<String, String>();
 
@@ -58,6 +61,13 @@ public class Gui extends Application {
         findShows.setStyle("-fx-background-color: SNOW;");
         cont = new Button("CONTINUE");
         cont.setStyle("-fx-background-color: SNOW;");
+        menuBar = new MenuBar();
+        menu = new Menu("MENU");
+        myMovies = new MenuItem("MY MOVIES");
+        menu.getItems().addAll(myMovies);
+        menuBar.getMenus().add(menu);
+        menuBar.setStyle("-fx-background-color: FLORALWHITE;");
+        back = new Button("BACK");
 
         //change scene at start
         start.setOnAction(e -> {
@@ -77,30 +87,40 @@ public class Gui extends Application {
                     String userInput = userName.getText();
                     String passInput = password.getText();
 
-                    System.out.println("UserInputs: " + userInput);
-                    System.out.println("PassInputs: " + passInput);
+                    System.out.println("Username: " + userInput);
+                    System.out.println("Password: " + passInput);
+
+                    //look for user and password
+                    Boolean foundUser = connect.lookForUser(userInput);
+                    Boolean correctPass = connect.checkPass(userInput, passInput);
+
+                    System.out.println("Username found? " + foundUser);
+                    System.out.println("Password found? " + correctPass);
 
                     //if one of the inputs are empty then print a empty statement
                     if(passInput.equals("") || userInput.equals("")){
                         holdLogInStmt = "missing an input";
                         logInErrorStmt.setText(holdLogInStmt);
                     }
-                    //checks to see if user is in the list of usernames and passwords
-                    else if(!userPassList.containsKey(userInput)){
-                        userPassList.put(userInput, passInput);
+                    //if there is none found then add
+                    else if(!foundUser){
+
+                        connect.addLogIn(userInput, passInput);
+                        System.out.println("Input added to table");
+
                         primaryStage.setScene(sceneMap.get("selections"));
                     }
-                    //else if password doesn't match print error message
-                    else if(!userPassList.get(userInput).equals(passInput)){
+                    //else if password doesn't, match print error message
+                    else if(foundUser && !correctPass){
                         holdLogInStmt = "password is wrong";
+                        System.out.println("Password is wrong");
                         logInErrorStmt.setText(holdLogInStmt);
                     }
                     //else if user and pass is same go to next scene
-                    else if(userPassList.get(userInput).equals(passInput)){
+                    else if(foundUser && correctPass){
+                        System.out.println("correct user and pass");
                         primaryStage.setScene(sceneMap.get("selections"));
-                        logInErrorStmt.setText(holdLogInStmt);
                     }
-
 
                 }
         );
@@ -118,7 +138,7 @@ public class Gui extends Application {
             connect.runQuery();
             connect.pickOne();
             updateText(connect.getTitle(), connect.getReleased(), connect.getAge(), connect.getIMBD(), connect.getRotten(),
-                    connect.getGenre(), connect.getDescription(), connect.getSeasons(), connect.getStream());
+                    connect.getGenre(), connect.getDescription(), connect.getSeasons(), connect.getStream(), connect.getMovieTitleLogin());
             connect.clear();
         });
 
@@ -139,10 +159,19 @@ public class Gui extends Application {
             primaryStage.setScene(sceneMap.get("selections"));
         });
 
+        myMovies.setOnAction(e -> {
+            primaryStage.setScene(sceneMap.get("movies"));
+        });
+
+        back.setOnAction(e -> {
+            primaryStage.setScene(sceneMap.get("selections"));
+        });
+
         sceneMap.put("start", startScene());
         sceneMap.put("logIn", logInScene());
         sceneMap.put("selections", optionsScene());
         sceneMap.put("recommendations", showsScene());
+        sceneMap.put("movies", myMoviesScene());
 
         primaryStage.setScene(sceneMap.get("start"));
 
@@ -242,11 +271,15 @@ public class Gui extends Application {
     }
 
     public void updateText(String titleStr, String releasedStr, String ageStr, String IMBDStr, String rottenStr,
-                           String genreStr, String descStr, String seasonStr, String streamStr) {
+                           String genreStr, String descStr, String seasonStr, String streamStr, String movieList) {
         System.out.println("titleStr: " + titleStr);
 
         if (titleStr != null ) {
             title.setText("Title: " + titleStr);
+            if (movieList != null) {
+                listOfMovies.setText(movieList);
+            }
+
             released.setText("Released Year: " + releasedStr);
             age.setText("Content Rating: " + ageStr);
             IMBD.setText("IMBD Rating: " + IMBDStr);
@@ -330,7 +363,7 @@ public class Gui extends Application {
         //all items to vbox and reset pane
         paneCenter.getChildren().addAll(t4, platformsList, t2, genresList, t3, ratingsRange, t5, ageRanges, findShows);
         pane.setStyle("-fx-background-color:#ad8989");
-
+        pane.setTop(menuBar);
         pane.setCenter(paneCenter);
 
         return new Scene(pane, 700, 700);
@@ -391,4 +424,24 @@ public class Gui extends Application {
         return new Scene(pane, 700, 700);
     }
 
+    public Scene myMoviesScene() {
+        Text moviesHeader = new Text("LIST OF MOVIES");
+        moviesHeader.setFont(Font.font("Helvetica",FontWeight.BOLD,20));
+        moviesHeader.setFill(Color.BURLYWOOD);
+
+        listOfMovies = new Text(" ");
+        listOfMovies.setFont(Font.font("Helvetica",FontWeight.BOLD,14));
+        listOfMovies.setFill(Color.BURLYWOOD);
+
+        back.setStyle("-fx-background-color: FLORALWHITE;");
+
+        VBox pane = new VBox(moviesHeader, listOfMovies, back);
+        pane.setSpacing(40.0);
+        pane.setAlignment(Pos.CENTER);
+
+        BorderPane bPane = new BorderPane();
+        bPane.setCenter(pane);
+        bPane.setStyle("-fx-background-color: MISTYROSE;");
+        return new Scene(bPane, 700, 700);
+    }
 }

@@ -12,8 +12,9 @@ public class MyConnection {
     Connection con;
     int seed = 1;
     String query = "SELECT * FROM tvShows.Shows WHERE ";
-    String query2 = "SELECT * FROM tvShows.Shows ORDER BY RAND() LIMIT 1"
     String title, description, genre, IMBD, rottenScore, age, released, seasons, stream;
+    String movieTitleLogin = "";
+    String userName, password;
     ArrayList<String> titleList = new ArrayList<String>();
     HashMap<String,String> descriptionMap = new HashMap<String,String>();
     HashMap<String,String> genreMap = new HashMap<String,String>();
@@ -105,7 +106,7 @@ public class MyConnection {
                         rottenMap.put(resultSet.getString("Title"),resultSet.getString("RottenRating"));
                         genreMap.put(resultSet.getString("Title"),resultSet.getString("Genre"));
                         descriptionMap.put(resultSet.getString("Title"),resultSet.getString("Description"));
-                        numOfSeasonsMap.put(resultSet.getString("Title"),resultSet.getString("NumOfseasons"));
+                        numOfSeasonsMap.put(resultSet.getString("Title"),resultSet.getString("NumOfSeasons"));
                         streamMap.put(resultSet.getString("Title"),resultSet.getString("StreamingPlatform"));
                     }
                 }
@@ -120,10 +121,10 @@ public class MyConnection {
     }
 
     public void pickOne() {
-        Random rand = new Random();
-        rand.setSeed(seed);
 
         if (releasedMap.size() > 0) {
+            Random rand = new Random();
+            rand.setSeed(seed);
             int randIndex = rand.nextInt(releasedMap.size() - 1 - 1) + 1;
             title = titleList.get(randIndex);
             released = releasedMap.get(title);
@@ -134,53 +135,72 @@ public class MyConnection {
             description = descriptionMap.get(title);
             seasons = numOfSeasonsMap.get(title);
             stream = streamMap.get(title);
-        }
+            try{
+                //check for connection
+                if (con != null) {
+                    //update table with query
+                    Statement stmt = con.createStatement();
+                    if (title != null) {
+                        movieTitleLogin += title;
+                        movieTitleLogin += "\n";
+                        System.out.println("username: " + userName);
+                        System.out.println("password: " + password);
+                        if (lookForUser(userName) == true) {
 
+                            String addMovieQ = "UPDATE tvShows.LogIn SET MovieTitle='" + movieTitleLogin + "' WHERE UserName='" + userName + "' AND Password='" + password +"'";
+
+                            System.out.println("add: " + addMovieQ);
+                            stmt.executeUpdate(addMovieQ);
+                        }
+
+                    }
+                }
+
+            }
+            catch(Exception e){
+                e.printStackTrace();
+            }
+        }
 
     }
 
+    public String getMovieTitleLogin() {
+        return movieTitleLogin;
+    }
+
     public String getTitle() {
-        System.out.println("title: " + title);
         return title;
     }
 
     public String getReleased() {
-        System.out.println("released: " + released);
         return released;
     }
 
     public String getAge() {
-        System.out.println("age: " + age);
         return age;
     }
 
     public String getIMBD() {
-        System.out.println("imbd: " + IMBD);
         return IMBD;
     }
 
     public String getRotten() {
-        System.out.println("rotten: " + rottenScore);
         return rottenScore;
     }
 
     public String getGenre() {
-        System.out.println("genre: " + genre);
         return genre;
     }
 
     public String getDescription() {
-        System.out.println("description: " + description);
         return description;
     }
 
     public String getSeasons() {
-        System.out.println("seasons: " + seasons);
         return seasons;
     }
 
     public String getStream() {
-        System.out.println("stream: " + stream);
         return stream;
     }
 
@@ -205,5 +225,83 @@ public class MyConnection {
         seasons = null;
         stream = null;
 
+    }
+
+    //add log in to table
+    public void addLogIn(String user, String pass){
+        String currentQ = "";
+        try{
+            //check for connection
+            if (con != null) {
+                //update table with query
+                Statement stmt = con.createStatement();
+                userName = user;
+                password = pass;
+                currentQ += "INSERT INTO tvShows.LogIn (UserName, Password)" + " VALUES ('" + user + "', " + "'" + pass + "')";
+                stmt.executeUpdate(currentQ);
+            }
+
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    //looks for user
+    public Boolean lookForUser(String user){
+        String currentQ = "";
+        String currentUser = "";
+        try{
+
+            //check to see if there is connection
+            if (con != null) {
+                Statement stmt = con.createStatement();
+                currentQ += "SELECT Username FROM tvShows.LogIn WHERE Username= '" + user + "'";
+                ResultSet result = stmt.executeQuery(currentQ);
+
+                //if there is a user then return true if user is found
+                while(result.next()){
+                    currentUser = result.getString("Username");
+                    if(currentUser == null){
+                        return false;
+                    }
+                    else{
+                        userName = user;
+                        return true;
+                    }
+                }
+            }
+
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    //checks to see if password and username match
+    public Boolean checkPass(String user, String pass){
+        String currentQ = "";
+        String currentUser = "";
+        try{
+            //makes sure there's a connection
+            if (con != null) {
+                Statement stmt = con.createStatement();
+                currentQ += "SELECT Username FROM tvShows.LogIn WHERE Username= '" + user + "' AND Password= '" + pass + "'";
+                ResultSet result = stmt.executeQuery(currentQ);
+
+                //goes through the result
+                while(result.next()){
+                    userName = user;
+                    password = pass;
+                    return true;
+                }
+            }
+
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        return false;
     }
 }
