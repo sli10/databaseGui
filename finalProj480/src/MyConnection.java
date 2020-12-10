@@ -5,15 +5,15 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.sql.*;
 import java.sql.DriverManager;
-import java.util.Scanner;
 
 public class MyConnection {
     Connection con;
+    String query = "SELECT * FROM tvShows.Shows WHERE ";
     public void connect() throws FileNotFoundException {
         String MySQLURL = "jdbc:mysql://localhost:3306/tvShows?useSSL=false";
 
         //get the current connection
-        URL path = MyConnection.class.getResource("login.txt");
+        URL path = MyConnection.class.getResource("connectInfo.txt");
         File file = new File(path.getFile());
         Scanner sc = new Scanner(file);
         sc.useDelimiter(" ");
@@ -32,5 +32,29 @@ public class MyConnection {
         }
     }
 
-    
+    public void getPlatform(String platform) {
+        ResultSet resultSet = null;
+        ArrayList<String> listTitle = new ArrayList<String>();
+        try {
+            if (con != null) {
+                Statement stmt = con.createStatement();
+                query += "StreamingPlatform = '";
+                query += platform;
+                query += "'";
+                resultSet = stmt.executeQuery(query);
+
+                while (resultSet.next()) {
+                    // System.out.println(resultSet.getString("Title"));
+                    listTitle.add(resultSet.getString("Title"));
+                }
+
+                for ( int i = 0; i < listTitle.size(); i++) {
+                    System.out.println(listTitle.get(i));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

@@ -54,11 +54,11 @@ public class Gui extends Application {
         findShows = new Button("Find Shows");
 
         //change scene at start
-		start.setOnAction(e -> {
+        start.setOnAction(e -> {
                     primaryStage.setScene(sceneMap.get("logIn"));
                     try {
                         connect.connect();
-                        connect.query();
+                        connect.getPlatform("Netflix");
                     } catch (FileNotFoundException fileNotFoundException) {
                         fileNotFoundException.printStackTrace();
                     }
@@ -66,41 +66,41 @@ public class Gui extends Application {
 
         );
 
-		//after login is clicked
-		logIn.setOnAction(e -> {
-		        //get the inputs of user and pass
-		        String userInput = userName.getText();
-		        String passInput = password.getText();
+        //after login is clicked
+        logIn.setOnAction(e -> {
+                    //get the inputs of user and pass
+                    String userInput = userName.getText();
+                    String passInput = password.getText();
 
-		        System.out.println("UserInputs: " + userInput);
-                System.out.println("PassInputs: " + passInput);
+                    System.out.println("UserInputs: " + userInput);
+                    System.out.println("PassInputs: " + passInput);
 
-		        //if one of the inputs are empty then print a empty statement
-		        if(passInput.equals("") || userInput.equals("")){
-                    holdLogInStmt = "missing an input";
-                    logInErrorStmt.setText(holdLogInStmt);
-                }
-		        //checks to see if user is in the list of usernames and passwords
-		        else if(!userPassList.containsKey(userInput)){
-		            userPassList.put(userInput, passInput);
-                    primaryStage.setScene(sceneMap.get("selections"));
-                }
-		        //else if password doesn't match print error message
-		        else if(!userPassList.get(userInput).equals(passInput)){
-		            holdLogInStmt = "password is wrong";
-                    logInErrorStmt.setText(holdLogInStmt);
-                }
-		        //else if user and pass is same go to next scene
-		        else if(userPassList.get(userInput).equals(passInput)){
-                    primaryStage.setScene(sceneMap.get("selections"));
-                    logInErrorStmt.setText(holdLogInStmt);
-                }
+                    //if one of the inputs are empty then print a empty statement
+                    if(passInput.equals("") || userInput.equals("")){
+                        holdLogInStmt = "missing an input";
+                        logInErrorStmt.setText(holdLogInStmt);
+                    }
+                    //checks to see if user is in the list of usernames and passwords
+                    else if(!userPassList.containsKey(userInput)){
+                        userPassList.put(userInput, passInput);
+                        primaryStage.setScene(sceneMap.get("selections"));
+                    }
+                    //else if password doesn't match print error message
+                    else if(!userPassList.get(userInput).equals(passInput)){
+                        holdLogInStmt = "password is wrong";
+                        logInErrorStmt.setText(holdLogInStmt);
+                    }
+                    //else if user and pass is same go to next scene
+                    else if(userPassList.get(userInput).equals(passInput)){
+                        primaryStage.setScene(sceneMap.get("selections"));
+                        logInErrorStmt.setText(holdLogInStmt);
+                    }
 
 
-		    }
+                }
         );
 
-		findShows.setOnAction(e-> {
+        findShows.setOnAction(e-> {
             primaryStage.setScene(sceneMap.get("recommendations"));
         });
 
@@ -202,7 +202,7 @@ public class Gui extends Application {
     }
 
     //scene to keep record of the options
-	public Scene optionsScene() {
+    public Scene optionsScene() {
         BorderPane pane = new BorderPane();
 
         //vbox to organize the items
@@ -269,10 +269,10 @@ public class Gui extends Application {
 
         return new Scene(pane, 1000, 800);
 
-	}
+    }
 
-	//shows the recommended shows scene
-	public Scene showsScene(){
+    //shows the recommended shows scene
+    public Scene showsScene(){
         BorderPane pane = new BorderPane();
 
         //header text
