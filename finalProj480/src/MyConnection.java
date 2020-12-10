@@ -32,27 +32,5 @@ public class MyConnection {
         }
     }
 
-    public void query() {
-        ResultSet resultSet = null;
-        String query = "";
-        ArrayList<String> listTitle = new ArrayList<String>();
-        try {
-            if (con != null) {
-                Statement stmt = con.createStatement();
-                query = "SELECT * FROM tvShows.shows";
-                resultSet = stmt.executeQuery(query);
-
-                while (resultSet.next()) {
-                    // System.out.println(resultSet.getString("Title"));
-                    listTitle.add(resultSet.getString("Title"));
-                }
-
-                for ( int i = 0; i < listTitle.size(); i++) {
-                    System.out.println(listTitle.get(i));
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+    
 }
