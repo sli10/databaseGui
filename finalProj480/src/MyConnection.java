@@ -9,9 +9,6 @@ public class MyConnection {
     // Connection object
     Connection con;
 
-    // Seed for randomly picking out of the returned values
-    int seed = 1;
-
     // Query that will be used to find shows with speicifc genre, IMBD score, age range, and stream platform
     String query = "SELECT * FROM tvShows.Shows WHERE ";
 
