@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="2dce981f-940e-4225-8c51-900ac74b8545" name="Default Changelist" comment="get combobox selections">
+      <change beforePath="$PROJECT_DIR$/out/production/finalProj480/Gui.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/finalProj480/Gui.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/finalProj480/MyConnection.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/finalProj480/MyConnection.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Gui.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Gui.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/MyConnection.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHome" value="$APPLICATION_HOME_DIR$/plugins/maven/lib/maven3" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectId" id="1lObP1aI3fTXj0DoVvNOhn3oCIK" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="restartRequiresConfirmation" value="false" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src" />
+      <recent name="$PROJECT_DIR$/lib" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Application.Gui">
+    <configuration name="Gui" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Gui" />
+      <module name="finalProj480" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="MyConnection" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="MyConnection" />
+      <module name="finalProj480" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.Gui" />
+        <item itemvalue="Application.MyConnection" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="2dce981f-940e-4225-8c51-900ac74b8545" name="Default Changelist" comment="" />
+      <created>1607471057320</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1607471057320</updated>
+    </task>
+    <task id="LOCAL-00001" summary="added txt for login">
+      <created>1607553504081</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1607553504082</updated>
+    </task>
+    <task id="LOCAL-00002" summary="added combobox items">
+      <created>1607567243361</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1607567243361</updated>
+    </task>
+    <task id="LOCAL-00003" summary="get combobox selections">
+      <created>1607569844222</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1607569844222</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="added new scenes" />
+    <MESSAGE value="added txt for login" />
+    <MESSAGE value="comboboxes" />
+    <MESSAGE value="added combobox items" />
+    <MESSAGE value="get combobox selections" />
+    <option name="LAST_COMMIT_MESSAGE" value="get combobox selections" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="328" y="79" key="#Project_Structure" timestamp="1607471070139">
+      <screen x="0" y="23" width="1680" height="949" />
+    </state>
+    <state x="328" y="79" key="#Project_Structure/0.23.1680.949@0.23.1680.949" timestamp="1607471070139" />
+    <state width="1210" height="220" key="GridCell.Tab.0.bottom" timestamp="1607666871545">
+      <screen x="0" y="23" width="1680" height="954" />
+    </state>
+    <state width="1210" height="221" key="GridCell.Tab.0.bottom/0.23.1680.947@0.23.1680.947" timestamp="1607592577925" />
+    <state width="1280" height="178" key="GridCell.Tab.0.bottom/0.23.1680.948@0.23.1680.948" timestamp="1607586135934" />
+    <state width="1210" height="220" key="GridCell.Tab.0.bottom/0.23.1680.949@0.0.1680.1050" timestamp="1607664529850" />
+    <state width="1210" height="220" key="GridCell.Tab.0.bottom/0.23.1680.949@0.23.1680.949" timestamp="1607664216281" />
+    <state width="1084" height="253" key="GridCell.Tab.0.bottom/0.23.1680.952@0.0.1680.1050" timestamp="1607497997846" />
+    <state width="1066" height="178" key="GridCell.Tab.0.bottom/0.23.1680.952@0.23.1680.952" timestamp="1607577325383" />
+    <state width="1210" height="220" key="GridCell.Tab.0.bottom/0.23.1680.954@0.23.1680.954" timestamp="1607666871545" />
+    <state width="1210" height="220" key="GridCell.Tab.0.center" timestamp="1607666871544">
+      <screen x="0" y="23" width="1680" height="954" />
+    </state>
+    <state width="1084" height="253" key="GridCell.Tab.0.center/0.0.1680.1050@0.0.1680.1050" timestamp="1607497372817" />
+    <state width="1210" height="221" key="GridCell.Tab.0.center/0.23.1680.947@0.23.1680.947" timestamp="1607592577924" />
+    <state width="1280" height="178" key="GridCell.Tab.0.center/0.23.1680.948@0.23.1680.948" timestamp="1607586135933" />
+    <state width="1210" height="220" key="GridCell.Tab.0.center/0.23.1680.949@0.0.1680.1050" timestamp="1607664529849" />
+    <state width="1210" height="220" key="GridCell.Tab.0.center/0.23.1680.949@0.23.1680.949" timestamp="1607664216279" />
+    <state width="1066" height="178" key="GridCell.Tab.0.center/0.23.1680.952@0.23.1680.952" timestamp="1607577325383" />
+    <state width="1210" height="220" key="GridCell.Tab.0.center/0.23.1680.954@0.23.1680.954" timestamp="1607666871544" />
+    <state width="1210" height="220" key="GridCell.Tab.0.left" timestamp="1607666871543">
+      <screen x="0" y="23" width="1680" height="954" />
+    </state>
+    <state width="1210" height="220" key="GridCell.Tab.0.left/0.0.1680.1050@0.0.1680.1050" timestamp="1607664529845" />
+    <state width="1210" height="221" key="GridCell.Tab.0.left/0.23.1680.947@0.23.1680.947" timestamp="1607592577924" />
+    <state width="1280" height="178" key="GridCell.Tab.0.left/0.23.1680.948@0.23.1680.948" timestamp="1607586135933" />
+    <state width="1210" height="220" key="GridCell.Tab.0.left/0.23.1680.949@0.23.1680.949" timestamp="1607664216279" />
+    <state width="1066" height="178" key="GridCell.Tab.0.left/0.23.1680.952@0.23.1680.952" timestamp="1607577325382" />
+    <state width="1210" height="220" key="GridCell.Tab.0.left/0.23.1680.954@0.23.1680.954" timestamp="1607666871543" />
+    <state width="1210" height="220" key="GridCell.Tab.0.right" timestamp="1607666871544">
+      <screen x="0" y="23" width="1680" height="954" />
+    </state>
+    <state width="1210" height="221" key="GridCell.Tab.0.right/0.23.1680.947@0.23.1680.947" timestamp="1607592577924" />
+    <state width="1280" height="178" key="GridCell.Tab.0.right/0.23.1680.948@0.23.1680.948" timestamp="1607586135934" />
+    <state width="1210" height="220" key="GridCell.Tab.0.right/0.23.1680.949@0.0.1680.1050" timestamp="1607664529850" />
+    <state width="1210" height="220" key="GridCell.Tab.0.right/0.23.1680.949@0.23.1680.949" timestamp="1607664216280" />
+    <state width="1084" height="253" key="GridCell.Tab.0.right/0.23.1680.952@0.0.1680.1050" timestamp="1607497997779" />
+    <state width="1066" height="178" key="GridCell.Tab.0.right/0.23.1680.952@0.23.1680.952" timestamp="1607577325383" />
+    <state width="1210" height="220" key="GridCell.Tab.0.right/0.23.1680.954@0.23.1680.954" timestamp="1607666871544" />
+    <state x="336" y="107" key="MergeDialog" timestamp="1607663720834">
+      <screen x="0" y="23" width="1680" height="949" />
+    </state>
+    <state x="336" y="107" key="MergeDialog/0.23.1680.949@0.23.1680.949" timestamp="1607663720834" />
+    <state x="440" y="237" key="Vcs.Push.Dialog.v2" timestamp="1607569852902">
+      <screen x="0" y="23" width="1680" height="947" />
+    </state>
+    <state x="440" y="237" key="Vcs.Push.Dialog.v2/0.23.1680.947@0.23.1680.947" timestamp="1607569852902" />
+    <state x="440" y="237" key="Vcs.Push.Dialog.v2/0.23.1680.949@0.23.1680.949" timestamp="1607561412773" />
+    <state x="873" y="418" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1607663712850">
+      <screen x="0" y="23" width="1680" height="949" />
+    </state>
+    <state x="873" y="417" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.23.1680.947@0.23.1680.947" timestamp="1607570597205" />
+    <state x="873" y="418" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.23.1680.949@0.23.1680.949" timestamp="1607663712850" />
+  </component>
+</project>

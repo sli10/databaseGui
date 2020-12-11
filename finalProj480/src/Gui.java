@@ -106,6 +106,9 @@ public class Gui extends Application {
                     Boolean foundUser = connect.lookForUser(userInput);
                     Boolean correctPass = connect.checkPass(userInput, passInput);
 
+                    //set button disable until all entries are filled in
+                    findShows.setDisable(true);
+
                     // If one of the inputs are empty then print a empty statement
                     if(passInput.equals("") || userInput.equals("")){
                         holdLogInStmt = "missing an input";
@@ -140,6 +143,7 @@ public class Gui extends Application {
         findShows.setOnAction(e-> {
             // Get to the recommendations scene
             primaryStage.setScene(sceneMap.get("recommendations"));
+
 
             // Update the query string by calling functions and execute it
             connect.getPlatform(chosenPlatform);
@@ -176,11 +180,20 @@ public class Gui extends Application {
             seasons.setText("");
             stream.setText("");
 
+            //set find shows to disable until all strings are filled
+            findShows.setDisable(true);
+
+            //reset the string variables that hold the combo box selections
+            chosenRating = null;
+            chosenAge = null;
+            chosenPlatform = null;
+            chosenGenre = null;
+
             // Get the selections scene once more
             primaryStage.setScene(sceneMap.get("selections"));
         });
 
-        // My Shows menu itme is clicked
+        // My Shows menu item is clicked
         myShows.setOnAction(e -> {
             updateShowsList(connect.getTitleLogin(), primaryStage);
             // Go to the movies scene
@@ -378,12 +391,20 @@ public class Gui extends Application {
             if(genresList.getValue() != null){
                 chosenGenre = genresList.getValue();
             }
+
+            if(chosenPlatform != null && chosenAge != null && chosenRating != null && chosenGenre != null){
+                findShows.setDisable(false);
+            }
         });
 
         // Set value chosen from ratings list
         ratingsRange.setOnAction(e->{
             if(ratingsRange.getValue() != null){
                 chosenRating = ratingsRange.getValue();
+            }
+
+            if(chosenPlatform != null && chosenAge != null && chosenRating != null && chosenGenre != null){
+                findShows.setDisable(false);
             }
         });
 
@@ -392,12 +413,20 @@ public class Gui extends Application {
             if(ageRanges.getValue() != null){
                 chosenAge = ageRanges.getValue();
             }
+
+            if(chosenPlatform != null && chosenAge != null && chosenRating != null && chosenGenre != null){
+                findShows.setDisable(false);
+            }
         });
 
         // Set value chosen from platform list
         platformsList.setOnAction(e->{
             if(platformsList.getValue() != null){
                 chosenPlatform = platformsList.getValue();
+            }
+
+            if(chosenPlatform != null && chosenAge != null && chosenRating != null && chosenGenre != null){
+                findShows.setDisable(false);
             }
         });
 

@@ -1,0 +1,14 @@
+<changelist name="Uncommitted_changes_before_Update_at_12_10_20,_11_15_PM_[Default_Changelist]1" date="1607663721061" recycled="true" deleted="true">
+  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_12_10_20,_11_15_PM_[Default_Changelist]1/shelved.patch" />
+  <option name="DESCRIPTION" value="Uncommitted changes before Update at 12/10/20, 11:15 PM [Default Changelist]" />
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/finalProj480/MyConnection.class" />
+    <option name="AFTER_PATH" value="out/production/finalProj480/MyConnection.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_12_10_20,_11_15_PM_[Default_Changelist]1/MyConnection.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/finalProj480/Gui.class" />
+    <option name="AFTER_PATH" value="out/production/finalProj480/Gui.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_12_10_20,_11_15_PM_[Default_Changelist]1/Gui.class" />
+  </binary>
+</changelist>

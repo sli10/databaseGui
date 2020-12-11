@@ -1,0 +1,113 @@
+Index: src/Gui.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import java.util.HashMap;\n\n\nimport javafx.application.Application;\nimport javafx.geometry.Insets;\nimport javafx.geometry.Pos;\nimport javafx.scene.Scene;\nimport javafx.scene.control.Button;\nimport javafx.scene.control.ComboBox;\nimport javafx.scene.control.TextField;\nimport javafx.scene.layout.BorderPane;\nimport javafx.scene.layout.HBox;\nimport javafx.scene.layout.VBox;\nimport javafx.scene.paint.Color;\nimport javafx.scene.text.Font;\nimport javafx.scene.text.FontWeight;\nimport javafx.scene.text.Text;\nimport javafx.scene.text.TextAlignment;\nimport javafx.stage.Stage;\n\npublic class Gui extends Application {\n    HashMap<String, Scene> sceneMap;\n    Button start, logIn;\n    ComboBox<String> genresList, ratingsRange, platformsList, ageRanges;\n    TextField userName, password;\n\n    String holdLogInStmt;\n    Text logInErrorStmt;\n\n    HashMap<String, String> userPassList = new HashMap<String, String>();\n\n    public static void main(String[] args) {\n        // TODO Auto-generated method stub\n        launch(args);\n    }\n\n    @Override\n    public void start(Stage primaryStage) throws Exception {\n        // TODO Auto-generated method stub\n        primaryStage.setTitle(\"Look for TV shows to watch\");\n\n        sceneMap = new HashMap<String,Scene>();\n\n        Scene scene = new Scene(new HBox(), 600, 600);\n        primaryStage.setScene(scene);\n        primaryStage.show();\n\n        //buttons: logIn, start\n        start = new Button(\"Start Looking\");\n        logIn = new Button(\"Log In\");\n\n        //change scene at start\n\t\tstart.setOnAction(e ->\n                primaryStage.setScene(sceneMap.get(\"logIn\"))\n        );\n\n\t\t//after login is clicked\n\t\tlogIn.setOnAction(e -> {\n\t\t        //get the inputs of user and pass\n\t\t        String userInput = userName.getText();\n\t\t        String passInput = password.getText();\n\n\t\t        System.out.println(\"UserInputs: \" + userInput);\n                System.out.println(\"PassInputs: \" + passInput);\n\n\t\t        //if one of the inputs are empty then print a empty statement\n\t\t        if(passInput.equals(\"\") || userInput.equals(\"\")){\n                    holdLogInStmt = \"missing an input\";\n                    logInErrorStmt.setText(holdLogInStmt);\n                }\n\t\t        //checks to see if user is in the list of usernames and passwords\n\t\t        else if(!userPassList.containsKey(userInput)){\n\t\t            userPassList.put(userInput, passInput);\n                    primaryStage.setScene(sceneMap.get(\"selections\"));\n                }\n\t\t        //else if password doesn't match print error message\n\t\t        else if(!userPassList.get(userInput).equals(passInput)){\n\t\t            holdLogInStmt = \"password is wrong\";\n                    logInErrorStmt.setText(holdLogInStmt);\n                }\n\t\t        //else if user and pass is same go to next scene\n\t\t        else if(userPassList.get(userInput).equals(passInput)){\n                    primaryStage.setScene(sceneMap.get(\"selections\"));\n                    logInErrorStmt.setText(holdLogInStmt);\n                }\n\n\n\t\t    }\n        );\n\n        sceneMap.put(\"start\", startScene());\n        sceneMap.put(\"logIn\", logInScene());\n        sceneMap.put(\"selections\", optionsScene());\n\n        primaryStage.setScene(sceneMap.get(\"start\"));\n\n    }\n\n    //start scene\n    public Scene startScene() {\n        BorderPane pane = new BorderPane();\n\n        //welcome text\n        Text t = new Text(500, 100, \"Are You \\n Looking For TV Shows\\n to Watch?\");\n        t.setFont(Font.font(\"Monospace\", FontWeight.BOLD, 70));\n        t.setTextAlignment(TextAlignment.CENTER);\n        t.setFill(Color.web(\"#ad8989\"));\n        t.setStroke(Color.web(\"#401921\"));\n        t.setStrokeWidth(2);\n\n        //organize with vbox\n        VBox paneCenter = new VBox(10, t, start);\n        paneCenter.setPadding(new Insets(100));\n        paneCenter.setAlignment(Pos.CENTER);\n\n\n        pane.setCenter(paneCenter);\n//        pane.setStyle(Color.web(\"#ffffff\"));\n\n        return new Scene(pane, 1200, 800);\n    }\n\n    //log into your account to get the list of shows already watched\n    public Scene logInScene(){\n        BorderPane pane = new BorderPane();\n\n        //username text before text field\n        Text user = new Text(550, 20, \"UserName: \\n\");\n        user.setFont(Font.font(\"Monospace\", FontWeight.BOLD, 20));\n        user.setFill(Color.web(\"#401921\"));\n\n        //password text before text field\n        Text pass = new Text(550, 20, \"Password: \\n\");\n        pass.setFont(Font.font(\"Monospace\", FontWeight.BOLD, 20));\n        pass.setFill(Color.web(\"#401921\"));\n\n        //initialize text fields\n        userName = new TextField();\n        userName.setMaxWidth(300);\n        password = new TextField();\n\n        //vBox to organize the items\n//        VBox paneCenter = new VBox(10, user, userName, pass, password);\n//        paneCenter.setPadding(new Insets(100));\n//        paneCenter.setAlignment(Pos.CENTER);\n\n        //hBox - userName\n        HBox holdUser = new HBox(10, user, userName);\n        holdUser.setPadding(new Insets(10));\n        holdUser.setAlignment(Pos.CENTER);\n\n        //hBox - password\n        HBox holdPass = new HBox(10, pass, password);\n        holdPass.setPadding(new Insets(10));\n        holdPass.setAlignment(Pos.CENTER);\n\n        logInErrorStmt = new Text();\n        logInErrorStmt.setFont(Font.font(\"Monospace\", FontWeight.SEMI_BOLD, 15));\n        logInErrorStmt.setFill(Color.web(\"#401921\"));\n\n        //vBox - vertical box to keep user and pass\n        VBox paneCenter = new VBox(10, holdUser, holdPass, logIn, logInErrorStmt);\n        paneCenter.setPadding(new Insets(10));\n        paneCenter.setAlignment(Pos.CENTER);\n\n        pane.setCenter(paneCenter);\n\n        return new Scene(pane, 1200, 800);\n    }\n\n    public void addToGenre(){\n        genresList = new ComboBox<>();\n        genresList.getItems().addAll();\n    }\n\n    //scene to keep record of the options\n\tpublic Scene optionsScene() {\n        BorderPane pane = new BorderPane();\n\n        //vbox to organize the items\n        VBox paneCenter = new VBox(10);\n        paneCenter.setAlignment(Pos.CENTER);\n\n        //genre - text and declare comboBox\n        Text t2 = new Text(550, 20, \"What genre are you interested in? \\n\");\n        t2.setFont(Font.font(\"Monospace\", FontWeight.BOLD, 20));\n        t2.setFill(Color.web(\"#401921\"));\n\n\n\n        //ratings - text and declare comboBox\n        Text t3 = new Text(550, 20, \"What range of ratings? \\n\");\n        t3.setFont(Font.font(\"Monospace\", FontWeight.BOLD, 20));\n        t3.setFill(Color.web(\"#401921\"));\n\n        ratingsRange = new ComboBox<>();\n\n        //platform - text and declare comboBox\n        Text t4 = new Text(550, 20, \"What platform do you watch on? \\n\");\n        t4.setFont(Font.font(\"Monospace\", FontWeight.BOLD, 20));\n        t4.setFill(Color.web(\"#401921\"));\n\n        platformsList = new ComboBox<>();\n\n        //Age - text and declare comboBox\n        Text t5 = new Text(550, 20, \"Content Ratings? \\n\");\n        t5.setFont(Font.font(\"Monospace\", FontWeight.BOLD, 20));\n        t5.setFill(Color.web(\"#401921\"));\n\n        ageRanges = new ComboBox<>();\n\n        //all items to vbox and reset pane\n        paneCenter.getChildren().addAll(t4, platformsList, t2, genresList, t3, ratingsRange, t5, ageRanges);\n        pane.setTop(paneCenter);\n        pane.setStyle(\"-fx-background-color:#ad8989\");\n\n        return new Scene(pane, 1000, 800);\n\n\t}\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/Gui.java	(revision 70ddb41f3f71967c66b59b191649d50127e28d30)
++++ src/Gui.java	(date 1607560865324)
+@@ -139,11 +139,6 @@
+         userName.setMaxWidth(300);
+         password = new TextField();
+ 
+-        //vBox to organize the items
+-//        VBox paneCenter = new VBox(10, user, userName, pass, password);
+-//        paneCenter.setPadding(new Insets(100));
+-//        paneCenter.setAlignment(Pos.CENTER);
+-
+         //hBox - userName
+         HBox holdUser = new HBox(10, user, userName);
+         holdUser.setPadding(new Insets(10));
+@@ -170,7 +165,24 @@
+ 
+     public void addToGenre(){
+         genresList = new ComboBox<>();
+-        genresList.getItems().addAll();
++        genresList.getItems().addAll("Animation", "Action & Adventure", "Anime", "Biography", "Comedy", "Crime", "Children", "Cult",
++                "Drama", "Documentary", "Fantasy", "Family", "Foods", "Game Show", "History", "Horror", "LGBTQ", "Netflix", "Mystery", "Musical", "Science-Fiction",
++                "Sport", "Travel", "Thriller", "Reality", "Romance", "Stand-up & Talk");
++    }
++
++    public void addToRatings(){
++        ratingsRange = new ComboBox<>();
++        ratingsRange.getItems().addAll("0-4", "5-7", "8-10");
++    }
++
++    public void  addToPlatforms(){
++        platformsList = new ComboBox<>();
++        platformsList.getItems().addAll("Hulu", "Netflix", "Prime Video", "Disney+");
++    }
++
++    public void addToAge(){
++        ageRanges = new ComboBox<>();
++        ageRanges.getItems().addAll("18", "16", "7");
+     }
+ 
+     //scene to keep record of the options
+@@ -185,29 +197,25 @@
+         Text t2 = new Text(550, 20, "What genre are you interested in? \n");
+         t2.setFont(Font.font("Monospace", FontWeight.BOLD, 20));
+         t2.setFill(Color.web("#401921"));
+-
+-
++        addToGenre();
+ 
+         //ratings - text and declare comboBox
+         Text t3 = new Text(550, 20, "What range of ratings? \n");
+         t3.setFont(Font.font("Monospace", FontWeight.BOLD, 20));
+         t3.setFill(Color.web("#401921"));
+-
+-        ratingsRange = new ComboBox<>();
++        addToRatings();
+ 
+         //platform - text and declare comboBox
+         Text t4 = new Text(550, 20, "What platform do you watch on? \n");
+         t4.setFont(Font.font("Monospace", FontWeight.BOLD, 20));
+         t4.setFill(Color.web("#401921"));
+-
+-        platformsList = new ComboBox<>();
++        addToPlatforms();
+ 
+         //Age - text and declare comboBox
+         Text t5 = new Text(550, 20, "Content Ratings? \n");
+         t5.setFont(Font.font("Monospace", FontWeight.BOLD, 20));
+         t5.setFill(Color.web("#401921"));
+-
+-        ageRanges = new ComboBox<>();
++        addToAge();
+ 
+         //all items to vbox and reset pane
+         paneCenter.getChildren().addAll(t4, platformsList, t2, genresList, t3, ratingsRange, t5, ageRanges);
+Index: src/MyConnection.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import java.io.File;\nimport java.io.FileNotFoundException;\nimport java.net.URL;\nimport java.util.Scanner;\nimport java.sql.*;\nimport java.sql.DriverManager;\nimport java.util.Scanner;\n\npublic class MyConnection {\n    public static void main(String[] args) throws FileNotFoundException {\n        String MySQLURL = \"jdbc:mysql://localhost:3306/salesSmall?useSSL=false\";\n\n        //get the current connection\n        URL path = MyConnection.class.getResource(\"login.txt\");\n        File file = new File(path.getFile());\n        Scanner sc = new Scanner(file);\n        sc.useDelimiter(\" \");\n\n        String databaseUserName = sc.next();\n        String databasePassword = sc.next();\n        Connection con = null;\n//        Statement stmt = con.createStatement();\n        ResultSet resultSet = null;\n        String query = \"\";\n\n        try {\n\n            // open connection\n            con = DriverManager.getConnection(MySQLURL, databaseUserName, databasePassword);\n            if (con != null) {\n                Statement stmt = con.createStatement();\n                query = \"SELECT P_CODE FROM salesSmall.PRODUCT\";\n                resultSet = stmt.executeQuery(query);\n\n                while (resultSet.next()) {\n                    System.out.println(resultSet.getString(\"P_CODE\"));\n\n                }\n\n\n\n            }\n        } catch (Exception e) {\n            e.printStackTrace();\n        }\n    }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/MyConnection.java	(revision 70ddb41f3f71967c66b59b191649d50127e28d30)
++++ src/MyConnection.java	(date 1607557639725)
+@@ -8,7 +8,7 @@
+ 
+ public class MyConnection {
+     public static void main(String[] args) throws FileNotFoundException {
+-        String MySQLURL = "jdbc:mysql://localhost:3306/salesSmall?useSSL=false";
++        String MySQLURL = "jdbc:mysql://localhost:3306/tvShows?useSSL=false";
+ 
+         //get the current connection
+         URL path = MyConnection.class.getResource("login.txt");
+@@ -29,11 +29,11 @@
+             con = DriverManager.getConnection(MySQLURL, databaseUserName, databasePassword);
+             if (con != null) {
+                 Statement stmt = con.createStatement();
+-                query = "SELECT P_CODE FROM salesSmall.PRODUCT";
++                query = "SELECT * FROM Shows ";
+                 resultSet = stmt.executeQuery(query);
+ 
+                 while (resultSet.next()) {
+-                    System.out.println(resultSet.getString("P_CODE"));
++                    System.out.println(resultSet.getString("Title"));
+ 
+                 }
+ 

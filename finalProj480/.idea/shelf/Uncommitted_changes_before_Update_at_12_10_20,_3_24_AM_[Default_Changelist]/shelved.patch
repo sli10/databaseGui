@@ -1,0 +1,306 @@
+Index: src/Gui.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import java.io.FileNotFoundException;\nimport java.sql.SQLException;\nimport java.util.HashMap;\n\n\nimport javafx.application.Application;\nimport javafx.geometry.Insets;\nimport javafx.geometry.Pos;\nimport javafx.scene.Scene;\nimport javafx.scene.control.Button;\nimport javafx.scene.control.ComboBox;\nimport javafx.scene.control.TextField;\nimport javafx.scene.layout.BorderPane;\nimport javafx.scene.layout.HBox;\nimport javafx.scene.layout.VBox;\nimport javafx.scene.paint.Color;\nimport javafx.scene.text.Font;\nimport javafx.scene.text.FontWeight;\nimport javafx.scene.text.Text;\nimport javafx.scene.text.TextAlignment;\nimport javafx.stage.Stage;\n\nimport javax.swing.*;\n\npublic class Gui extends Application {\n    HashMap<String, Scene> sceneMap;\n    Button start, logIn, findShows, cont;\n    ComboBox<String> genresList, ratingsRange, platformsList, ageRanges;\n    TextField userName, password;\n    String holdLogInStmt, chosenGenre, chosenAge, chosenPlatform, chosenRating;\n    Text title, description, genre, IMBD, rottenScore, age, released, seasons, stream;\n    Text logInErrorStmt;\n    MyConnection connect = new MyConnection();\n    HashMap<String, String> userPassList = new HashMap<String, String>();\n\n    public static void main(String[] args) {\n        // TODO Auto-generated method stub\n        launch(args);\n    }\n\n    @Override\n    public void start(Stage primaryStage) throws Exception {\n        // TODO Auto-generated method stub\n        primaryStage.setTitle(\"Look for TV shows to watch\");\n\n        sceneMap = new HashMap<String,Scene>();\n\n        Scene scene = new Scene(new HBox(), 600, 600);\n        primaryStage.setScene(scene);\n        primaryStage.show();\n\n        //buttons: logIn, start, findShows\n        start = new Button(\"START LOOKING\");\n        start.setStyle(\"-fx-background-color: SNOW;\");\n        logIn = new Button(\"LOG IN\");\n        logIn.setStyle(\"-fx-background-color: SNOW;\");\n        findShows = new Button(\"FIND SHOWS\");\n        findShows.setStyle(\"-fx-background-color: SNOW;\");\n        cont = new Button(\"CONTINUE\");\n        cont.setStyle(\"-fx-background-color: SNOW;\");\n\n        //change scene at start\n        start.setOnAction(e -> {\n                    primaryStage.setScene(sceneMap.get(\"logIn\"));\n                    try {\n                        connect.connect();\n                    } catch (FileNotFoundException fileNotFoundException) {\n                        fileNotFoundException.printStackTrace();\n                    }\n                }\n\n        );\n\n        //after login is clicked\n        logIn.setOnAction(e -> {\n                    //get the inputs of user and pass\n                    String userInput = userName.getText();\n                    String passInput = password.getText();\n\n                    System.out.println(\"UserInputs: \" + userInput);\n                    System.out.println(\"PassInputs: \" + passInput);\n\n                    //if one of the inputs are empty then print a empty statement\n                    if(passInput.equals(\"\") || userInput.equals(\"\")){\n                        holdLogInStmt = \"missing an input\";\n                        logInErrorStmt.setText(holdLogInStmt);\n                    }\n                    //checks to see if user is in the list of usernames and passwords\n                    else if(!userPassList.containsKey(userInput)){\n                        userPassList.put(userInput, passInput);\n                        primaryStage.setScene(sceneMap.get(\"selections\"));\n                    }\n                    //else if password doesn't match print error message\n                    else if(!userPassList.get(userInput).equals(passInput)){\n                        holdLogInStmt = \"password is wrong\";\n                        logInErrorStmt.setText(holdLogInStmt);\n                    }\n                    //else if user and pass is same go to next scene\n                    else if(userPassList.get(userInput).equals(passInput)){\n                        primaryStage.setScene(sceneMap.get(\"selections\"));\n                        logInErrorStmt.setText(holdLogInStmt);\n                    }\n\n\n                }\n        );\n\n        findShows.setOnAction(e-> {\n            primaryStage.setScene(sceneMap.get(\"recommendations\"));\n            System.out.println(\"chosen platform: \" + chosenPlatform);\n            System.out.println(\"chosen genre: \" + chosenGenre);\n            System.out.println(\"chosen rating: \" + chosenRating);\n            System.out.println(\"chosen age: \" + chosenAge);\n            connect.getPlatform(chosenPlatform);\n            connect.getGenre(chosenGenre);\n            connect.getRange(chosenRating);\n            connect.getContent(chosenAge);\n            connect.runQuery();\n            connect.pickOne();\n            updateText(connect.getTitle(), connect.getReleased(), connect.getAge(), connect.getIMBD(), connect.getRotten(),\n                    connect.getGenre(), connect.getDescription(), connect.getSeasons(), connect.getStream());\n            connect.clear();\n        });\n\n        cont.setOnAction(e-> {\n            genresList.getSelectionModel().clearSelection();\n            ratingsRange.getSelectionModel().clearSelection();\n            platformsList.getSelectionModel().clearSelection();\n            ageRanges.getSelectionModel().clearSelection();\n            title.setText(\"\");\n            description.setText(\"\");\n            genre.setText(\"\");\n            IMBD.setText(\"\");\n            rottenScore.setText(\"\");\n            age.setText(\"\");\n            released.setText(\"\");\n            seasons.setText(\"\");\n            stream.setText(\"\");\n            primaryStage.setScene(sceneMap.get(\"selections\"));\n        });\n\n        sceneMap.put(\"start\", startScene());\n        sceneMap.put(\"logIn\", logInScene());\n        sceneMap.put(\"selections\", optionsScene());\n        sceneMap.put(\"recommendations\", showsScene());\n\n        primaryStage.setScene(sceneMap.get(\"start\"));\n\n    }\n\n    //start scene\n    public Scene startScene() {\n        BorderPane pane = new BorderPane();\n\n        //welcome text\n        Text t = new Text(\"LOOKING FOR A SHOW?\");\n        t.setFont(Font.font(\"Helvetica\", FontWeight.BOLD, 30));\n        t.setTextAlignment(TextAlignment.CENTER);\n        t.setFill(Color.BURLYWOOD);\n\n        Text t2 = new Text(\"YOU CAME TO THE RIGHT PLACE\");\n        t2.setFont(Font.font(\"Helvetica\", FontWeight.BOLD, 20));\n        t2.setTextAlignment(TextAlignment.CENTER);\n        t2.setFill(Color.BURLYWOOD);\n\n\n        //organize with vbox\n        VBox paneCenter = new VBox(10, t, t2, start);\n        paneCenter.setPadding(new Insets(100));\n        paneCenter.setAlignment(Pos.CENTER);\n        paneCenter.setStyle(\"-fx-background-color: azure;\");\n        addToGenre();\n        pane.setCenter(paneCenter);\n\n        return new Scene(pane, 700, 700);\n    }\n\n    //log into your account to get the list of shows already watched\n    public Scene logInScene(){\n        BorderPane pane = new BorderPane();\n\n        //username text before text field\n        Text user = new Text(\"UserName: \\n\");\n        user.setFont(Font.font(\"Helvetica\", FontWeight.BOLD, 20));\n        user.setFill(Color.SEAGREEN);\n\n        //password text before text field\n        Text pass = new Text(\"Password: \\n\");\n        pass.setFont(Font.font(\"Helvetica\", FontWeight.BOLD, 20));\n        pass.setFill(Color.SEAGREEN);\n\n        //initialize text fields\n        userName = new TextField();\n        userName.setMaxWidth(300);\n        password = new TextField();\n\n        //hBox - userName\n        HBox holdUser = new HBox(10, user, userName);\n        holdUser.setPadding(new Insets(10));\n        holdUser.setAlignment(Pos.CENTER);\n\n        //hBox - password\n        HBox holdPass = new HBox(10, pass, password);\n        holdPass.setPadding(new Insets(10));\n        holdPass.setAlignment(Pos.CENTER);\n\n        logInErrorStmt = new Text();\n        logInErrorStmt.setFont(Font.font(\"Helvetica\", FontWeight.SEMI_BOLD, 15));\n        logInErrorStmt.setFill(Color.MINTCREAM);\n\n        //vBox - vertical box to keep user and pass\n        VBox paneCenter = new VBox(10, holdUser, holdPass, logIn, logInErrorStmt);\n        paneCenter.setPadding(new Insets(10));\n        paneCenter.setAlignment(Pos.CENTER);\n\n        pane.setCenter(paneCenter);\n        pane.setStyle(\"-fx-background-color: thistle;\");\n\n        return new Scene(pane, 700, 700);\n    }\n\n    public void addToGenre(){\n        genresList = new ComboBox<>();\n        genresList.getItems().addAll(\"Animation\", \"Action & Adventure\", \"Anime\", \"Biography\", \"Comedy\", \"Crime\", \"Children\", \"Cult\",\n                \"Drama\", \"Documentary\", \"Fantasy\", \"Family\", \"Foods\", \"Game Show\", \"History\", \"Horror\", \"LGBTQ\", \"Netflix\", \"Mystery\", \"Musical\", \"Science-Fiction\",\n                \"Sport\", \"Travel\", \"Thriller\", \"Reality\", \"Romance\", \"Stand-up & Talk\");\n    }\n\n    public void addToRatings(){\n        ratingsRange = new ComboBox<>();\n        ratingsRange.getItems().addAll(\"0-4\", \"5-7\", \"8-10\");\n    }\n\n    public void  addToPlatforms(){\n        platformsList = new ComboBox<>();\n        platformsList.getItems().addAll(\"Hulu\", \"Netflix\", \"Prime Video\", \"Disney+\");\n    }\n\n    public void addToAge(){\n        ageRanges = new ComboBox<>();\n        ageRanges.getItems().addAll(\"18\", \"16\", \"7\");\n    }\n\n    public void updateText(String titleStr, String releasedStr, String ageStr, String IMBDStr, String rottenStr,\n                           String genreStr, String descStr, String seasonStr, String streamStr) {\n        System.out.println(\"titleStr: \" + titleStr);\n\n        if (titleStr != null ) {\n            title.setText(\"Title: \" + titleStr);\n            released.setText(\"Released Year: \" + releasedStr);\n            age.setText(\"Content Rating: \" + ageStr);\n            IMBD.setText(\"IMBD Rating: \" + IMBDStr);\n            rottenScore.setText(\"Rotten Score: \" + rottenStr);\n            genre.setText(\"Genre: \" + genreStr);\n            description.setText(\"Description: \" + descStr);\n            String temp = seasonStr;\n            String delims = \"S\";\n            String[] tokens = temp.split(delims);\n\n            String seasonNum = tokens[0];\n            seasons.setText(\"No. of Seasons: \" + seasonNum + \" Season(s)\");\n            stream.setText(\"Streaming Platform: \" + streamStr);\n        }\n        else {\n            title.setText(\"No TV Shows Match... Please Try Again!\" );\n        }\n    }\n    \n    //scene to keep record of the options\n    public Scene optionsScene() {\n        BorderPane pane = new BorderPane();\n\n        //vbox to organize the items\n        VBox paneCenter = new VBox(10);\n        paneCenter.setAlignment(Pos.CENTER);\n\n        //genre - text and declare comboBox\n        Text t2 = new Text(550, 20, \"WHAT GENRE ARE YOU INTERESTED IN? \\n\");\n        t2.setFont(Font.font(\"Helvetica\", FontWeight.BOLD, 20));\n        t2.setFill(Color.web(\"#401921\"));\n        addToGenre();\n\n        //ratings - text and declare comboBox\n        Text t3 = new Text(550, 20, \"WHAT RANGE SHOULD THE RATING BE? \\n\");\n        t3.setFont(Font.font(\"Helvetica\", FontWeight.BOLD, 20));\n        t3.setFill(Color.web(\"#401921\"));\n        addToRatings();\n\n        //platform - text and declare comboBox\n        Text t4 = new Text(550, 20, \"WHAT PLATFORM DO YOU WANT TO WATCH ON? \\n\");\n        t4.setFont(Font.font(\"Helvetica\", FontWeight.BOLD, 20));\n        t4.setFill(Color.web(\"#401921\"));\n        addToPlatforms();\n\n        //Age - text and declare comboBox\n        Text t5 = new Text(550, 20, \"WHAT SHOULD BE THE CONTENT RATING? \\n\");\n        t5.setFont(Font.font(\"Helvetica\", FontWeight.BOLD, 20));\n        t5.setFill(Color.web(\"#401921\"));\n        addToAge();\n\n        //set value chosen from genres list\n        genresList.setOnAction(e->{\n            if(genresList.getValue() != null){\n                chosenGenre = genresList.getValue();\n            }\n        });\n\n        //set value chosen from ratings list\n        ratingsRange.setOnAction(e->{\n            if(ratingsRange.getValue() != null){\n                chosenRating = ratingsRange.getValue();\n            }\n        });\n\n        //set value chosen from age list\n        ageRanges.setOnAction(e->{\n            if(ageRanges.getValue() != null){\n                chosenAge = ageRanges.getValue();\n            }\n        });\n\n        //set value chosen from platform list\n        platformsList.setOnAction(e->{\n            if(platformsList.getValue() != null){\n                chosenPlatform = platformsList.getValue();\n            }\n        });\n\n\n        //all items to vbox and reset pane\n        paneCenter.getChildren().addAll(t4, platformsList, t2, genresList, t3, ratingsRange, t5, ageRanges, findShows);\n        pane.setStyle(\"-fx-background-color:#ad8989\");\n\n        pane.setCenter(paneCenter);\n\n        return new Scene(pane, 700, 700);\n\n    }\n\n    //shows the recommended shows scene\n    public Scene showsScene(){\n        BorderPane pane = new BorderPane();\n\n        //header text\n        Text rec = new Text(550, 20, \"HERE IS YOUR RECOMMENDATION: \\n\");\n        rec.setFont(Font.font(\"Helvetica\", FontWeight.BOLD, 30));\n        rec.setFill(Color.FLORALWHITE);\n\n        title = new Text();\n        title.setFont(Font.font(\"Helvetica\", FontWeight.BOLD, 20));\n        title.setFill(Color.OLDLACE);\n\n        released = new Text();\n        released.setFont(Font.font(\"Helvetica\", FontWeight.BOLD, 14));\n        released.setFill(Color.PAPAYAWHIP);\n\n        age = new Text();\n        age.setFont(Font.font(\"Helvetica\", FontWeight.BOLD, 14));\n        age.setFill(Color.PAPAYAWHIP);\n\n        IMBD = new Text();\n        IMBD.setFont(Font.font(\"Helvetica\", FontWeight.BOLD, 14));\n        IMBD.setFill(Color.PAPAYAWHIP);\n\n        rottenScore = new Text();\n        rottenScore.setFont(Font.font(\"Helvetica\", FontWeight.BOLD, 14));\n        rottenScore.setFill(Color.PAPAYAWHIP);\n\n        genre = new Text();\n        genre.setFont(Font.font(\"Helvetica\", FontWeight.BOLD, 14));\n        genre.setFill(Color.PAPAYAWHIP);\n\n        description = new Text();\n        description.setFont(Font.font(\"Helvetica\", FontWeight.BOLD, 14));\n        description.setWrappingWidth(600);\n        description.setFill(Color.PAPAYAWHIP);\n\n        seasons = new Text();\n        seasons.setFont(Font.font(\"Helvetica\", FontWeight.BOLD, 14));\n        seasons.setFill(Color.PAPAYAWHIP);\n\n        stream = new Text();\n        stream.setFont(Font.font(\"Helvetica\", FontWeight.BOLD, 14));\n        stream.setFill(Color.PAPAYAWHIP);\n\n        //vbox to organize\n        VBox paneCenter = new VBox(10, rec, title, released, age, rottenScore, genre, description, seasons, stream, cont);\n        paneCenter.setAlignment(Pos.CENTER);\n        pane.setCenter(paneCenter);\n        pane.setStyle(\"-fx-background-color: LIGHTSTEELBLUE;\");\n        return new Scene(pane, 700, 700);\n    }\n\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/Gui.java	(revision 4d196bd56c66d5ba80fdbfd888d55630e7f5520d)
++++ src/Gui.java	(date 1607590559030)
+@@ -77,28 +77,42 @@
+                     String userInput = userName.getText();
+                     String passInput = password.getText();
+ 
+-                    System.out.println("UserInputs: " + userInput);
+-                    System.out.println("PassInputs: " + passInput);
++                    connect.setUser(userInput);
++                    connect.setPass(passInput);
++
++                    System.out.println("Username: " + userInput);
++                    System.out.println("Password: " + passInput);
++
++                    //look for user and password
++                    Boolean foundUser = connect.lookForUser(userInput);
++                    Boolean correctPass = connect.checkPass(userInput, passInput);
++
++                    System.out.println("Username found? " + foundUser);
++                    System.out.println("Password found? " + correctPass);
+ 
+                     //if one of the inputs are empty then print a empty statement
+                     if(passInput.equals("") || userInput.equals("")){
+                         holdLogInStmt = "missing an input";
+                         logInErrorStmt.setText(holdLogInStmt);
+                     }
+-                    //checks to see if user is in the list of usernames and passwords
+-                    else if(!userPassList.containsKey(userInput)){
+-                        userPassList.put(userInput, passInput);
++                    //if there is none found then add
++                    else if(!foundUser){
++
++                        connect.addLogIn(userInput, passInput);
++                        System.out.println("Input added to table");
++
+                         primaryStage.setScene(sceneMap.get("selections"));
+                     }
+-                    //else if password doesn't match print error message
+-                    else if(!userPassList.get(userInput).equals(passInput)){
++                    //else if password doesn't, match print error message
++                    else if(foundUser && !correctPass){
+                         holdLogInStmt = "password is wrong";
++                        System.out.println("Password is wrong");
+                         logInErrorStmt.setText(holdLogInStmt);
+                     }
+                     //else if user and pass is same go to next scene
+-                    else if(userPassList.get(userInput).equals(passInput)){
++                    else if(foundUser && correctPass){
++                        System.out.println("correct user and pass");
+                         primaryStage.setScene(sceneMap.get("selections"));
+-                        logInErrorStmt.setText(holdLogInStmt);
+                     }
+ 
+ 
+Index: src/MyConnection.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import java.io.File;\nimport java.io.FileNotFoundException;\nimport java.net.URL;\nimport java.util.ArrayList;\nimport java.util.HashMap;\nimport java.util.Random;\nimport java.util.Scanner;\nimport java.sql.*;\nimport java.sql.DriverManager;\n\npublic class MyConnection {\n    Connection con;\n    int seed = 1;\n    String query = \"SELECT * FROM tvShows.Shows WHERE \";\n    String query2 = \"SELECT * FROM tvShows.Shows ORDER BY RAND() LIMIT 1\"\n    String title, description, genre, IMBD, rottenScore, age, released, seasons, stream;\n    ArrayList<String> titleList = new ArrayList<String>();\n    HashMap<String,String> descriptionMap = new HashMap<String,String>();\n    HashMap<String,String> genreMap = new HashMap<String,String>();\n    HashMap<String,String> IMBDMap = new HashMap<String,String>();\n    HashMap<String,String> rottenMap = new HashMap<String,String>();\n    HashMap<String,String> ageMap = new HashMap<String,String>();\n    HashMap<String,String> releasedMap = new HashMap<String,String>();\n    HashMap<String,String> numOfSeasonsMap = new HashMap<String,String>();\n    HashMap<String,String> streamMap = new HashMap<String,String>();\n\n\n    public void connect() throws FileNotFoundException {\n        String MySQLURL = \"jdbc:mysql://localhost:3306/tvShows?useSSL=false\";\n\n        //get the current connection\n        URL path = MyConnection.class.getResource(\"connectInfo.txt\");\n        File file = new File(path.getFile());\n        Scanner sc = new Scanner(file);\n        sc.useDelimiter(\" \");\n\n        String databaseUserName = sc.next();\n        String databasePassword = sc.next();\n        con = null;\n\n        try {\n\n            // open connection\n            con = DriverManager.getConnection(MySQLURL, databaseUserName, databasePassword);\n\n        } catch (Exception e) {\n            e.printStackTrace();\n        }\n    }\n\n    public void getPlatform(String platform) {\n        query += \"StreamingPlatform = '\";\n        query += platform;\n        query += \"'\";\n    }\n\n    public void getGenre(String genre) {\n        query += \" AND Genre LIKE '\";\n        query += genre;\n        query += \"%'\";\n        query += \" OR Genre LIKE \";\n        query += \"'%\";\n        query += genre;\n        query += \"'\";\n    }\n\n    public void getRange(String currRange) {\n        String temp = currRange;\n        String delims = \"-\";\n        String[] tokens = temp.split(delims);\n\n        String firstNum = tokens[0];\n        String secondNum = tokens[1];\n\n        query += \" AND \";\n        query += firstNum;\n        query += \" <= IMBDRating AND \";\n        query += secondNum;\n        query += \" >= IMBDRating\";\n    }\n\n    public void getContent(String content) {\n        query += \" AND ContentRating = \";\n        query += content;\n    }\n\n    public int runQuery() {\n        ResultSet resultSet = null;\n        System.out.println(\"query: \" + query);\n        try {\n            if (con != null) {\n                Statement stmt = con.createStatement();\n\n                resultSet = stmt.executeQuery(query);\n\n                if (resultSet == null) {\n                    System.out.println(\"no show\");\n                }\n                else {\n                    while (resultSet.next()) {\n                        titleList.add(resultSet.getString(\"Title\"));\n                        releasedMap.put(resultSet.getString(\"Title\"),resultSet.getString(\"Released\"));\n                        ageMap.put(resultSet.getString(\"Title\"),resultSet.getString(\"ContentRating\"));\n                        IMBDMap.put(resultSet.getString(\"Title\"),resultSet.getString(\"IMBDRating\"));\n                        rottenMap.put(resultSet.getString(\"Title\"),resultSet.getString(\"RottenRating\"));\n                        genreMap.put(resultSet.getString(\"Title\"),resultSet.getString(\"Genre\"));\n                        descriptionMap.put(resultSet.getString(\"Title\"),resultSet.getString(\"Description\"));\n                        numOfSeasonsMap.put(resultSet.getString(\"Title\"),resultSet.getString(\"NumOfseasons\"));\n                        streamMap.put(resultSet.getString(\"Title\"),resultSet.getString(\"StreamingPlatform\"));\n                    }\n                }\n\n\n            }\n        } catch (Exception e) {\n            return 0;\n        }\n\n        return 1;\n    }\n\n    public void pickOne() {\n        Random rand = new Random();\n        rand.setSeed(seed);\n\n        if (releasedMap.size() > 0) {\n            int randIndex = rand.nextInt(releasedMap.size() - 1 - 1) + 1;\n            title = titleList.get(randIndex);\n            released = releasedMap.get(title);\n            age = ageMap.get(title);\n            IMBD = IMBDMap.get(title);\n            rottenScore = rottenMap.get(title);\n            genre = genreMap.get(title);\n            description = descriptionMap.get(title);\n            seasons = numOfSeasonsMap.get(title);\n            stream = streamMap.get(title);\n        }\n\n\n    }\n\n    public String getTitle() {\n        System.out.println(\"title: \" + title);\n        return title;\n    }\n\n    public String getReleased() {\n        System.out.println(\"released: \" + released);\n        return released;\n    }\n\n    public String getAge() {\n        System.out.println(\"age: \" + age);\n        return age;\n    }\n\n    public String getIMBD() {\n        System.out.println(\"imbd: \" + IMBD);\n        return IMBD;\n    }\n\n    public String getRotten() {\n        System.out.println(\"rotten: \" + rottenScore);\n        return rottenScore;\n    }\n\n    public String getGenre() {\n        System.out.println(\"genre: \" + genre);\n        return genre;\n    }\n\n    public String getDescription() {\n        System.out.println(\"description: \" + description);\n        return description;\n    }\n\n    public String getSeasons() {\n        System.out.println(\"seasons: \" + seasons);\n        return seasons;\n    }\n\n    public String getStream() {\n        System.out.println(\"stream: \" + stream);\n        return stream;\n    }\n\n    public void clear() {\n        query = \"SELECT * FROM tvShows.Shows WHERE \";\n        titleList.clear();\n        releasedMap.clear();\n        ageMap.clear();\n        IMBDMap.clear();\n        rottenMap.clear();\n        genreMap.clear();\n        descriptionMap.clear();\n        numOfSeasonsMap.clear();\n        streamMap.clear();\n        title = null;\n        released = null;\n        age = null;\n        IMBD = null;\n        rottenScore = null;\n        genre = null;\n        description = null;\n        seasons = null;\n        stream = null;\n\n    }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/MyConnection.java	(revision 4d196bd56c66d5ba80fdbfd888d55630e7f5520d)
++++ src/MyConnection.java	(date 1607592213610)
+@@ -12,9 +12,10 @@
+     Connection con;
+     int seed = 1;
+     String query = "SELECT * FROM tvShows.Shows WHERE ";
+-    String query2 = "SELECT * FROM tvShows.Shows ORDER BY RAND() LIMIT 1"
+-    String title, description, genre, IMBD, rottenScore, age, released, seasons, stream;
++    String query2 = "SELECT * FROM tvShows.Shows ORDER BY RAND() LIMIT 1";
++    String title, description, genre, IMBD, rottenScore, age, released, seasons, stream, user, pass;
+     ArrayList<String> titleList = new ArrayList<String>();
++    ArrayList<String> currTitles = new ArrayList<>();
+     HashMap<String,String> descriptionMap = new HashMap<String,String>();
+     HashMap<String,String> genreMap = new HashMap<String,String>();
+     HashMap<String,String> IMBDMap = new HashMap<String,String>();
+@@ -29,7 +30,7 @@
+         String MySQLURL = "jdbc:mysql://localhost:3306/tvShows?useSSL=false";
+ 
+         //get the current connection
+-        URL path = MyConnection.class.getResource("connectInfo.txt");
++        URL path = MyConnection.class.getResource("login.txt");
+         File file = new File(path.getFile());
+         Scanner sc = new Scanner(file);
+         sc.useDelimiter(" ");
+@@ -119,11 +120,81 @@
+         return 1;
+     }
+ 
++    public void setUser(String inputUser){
++        user = inputUser;
++    }
++
++    public void setPass(String inputPass){
++        pass = inputPass;
++    }
++
++    //add log in to table
++    public void addLogIn(String user, String pass){
++        String currentQ = "";
++        try{
++            //check for connection
++            if (con != null) {
++                //update table with query
++                Statement stmt = con.createStatement();
++                currentQ += "INSERT INTO LogIn(Username, Password)" + " VALUES ('" + user + "', " + "'" + pass + "')";
++                stmt.executeUpdate(currentQ);
++            }
++
++        }
++        catch(Exception e){
++            e.printStackTrace();
++        }
++    }
++
++    public void getListOfMovies(){
++
++        try{
++            //check for connection
++            if (con != null) {
++                //update table with query
++                Statement stmt = con.createStatement();
++                String currentQ = "SELECT MovieTitle FROM LogIn WHERE Username=" + "'" + user + "'";
++                ResultSet result = stmt.executeQuery(currentQ);
++
++                while(result.next()) {
++
++                    currTitles.add(result.getString("MovieTitle"));
++
++                }
++
++            }
++
++        }
++        catch(Exception e){
++            e.printStackTrace();
++        }
++
++    }
++
++    public void updateEntry(String currUser, String currPass, String movie){
++        try{
++            //check for connection
++            if (con != null) {
++                //update table with query
++                Statement stmt = con.createStatement();
++                String currentQ = "UPDATE LogIn SET MovieTitle='" + movie + "' WHERE Username='" + user
++                        + "'";
++                stmt.executeUpdate(currentQ);
++            }
++
++        }
++        catch(Exception e){
++            e.printStackTrace();
++        }
++    }
++
++
+     public void pickOne() {
+-        Random rand = new Random();
+-        rand.setSeed(seed);
++
++        if (releasedMap.size() > 0) {
++            Random rand = new Random();
++            rand.setSeed(seed);
+ 
+-        if (releasedMap.size() > 0) {
+             int randIndex = rand.nextInt(releasedMap.size() - 1 - 1) + 1;
+             title = titleList.get(randIndex);
+             released = releasedMap.get(title);
+@@ -134,10 +205,49 @@
+             description = descriptionMap.get(title);
+             seasons = numOfSeasonsMap.get(title);
+             stream = streamMap.get(title);
++
++            try{
++                if(con != null){
++                    Statement stmt = con.createStatement();
++//                    String getUser = "SELECT MovieTitle FROM LogIn WHERE Username=" + user;
++//                    ResultSet result = stmt.executeQuery(getUser);
++
++                    getListOfMovies();
++
++                    StringBuilder newSetMovies = new StringBuilder("");
++
++                    //loop to find the null value
++                    for(int i = 0; i < currTitles.size(); i++){
++
++                        if(currTitles.get(i) == null){
++                            String currentQ = "UPDATE LogIn SET MovieTitle='" + title + "' WHERE Username='" + user
++                                    + "'";
++                            stmt.executeUpdate(currentQ);
++                            return;
++                        }
++                        else{
++                            newSetMovies.append(currTitles.get(i) + ",");
++                        }
++                    }
++
++
++
++
++                    //if none of them are null add to table
++//                    addLogIn(user, pass);
++                    updateEntry(user, pass, newSetMovies.toString());
++                    System.out.println("NEW " + newSetMovies.toString());
++
++                }
++            }
++            catch (Exception e){
++                e.printStackTrace();
++            }
+         }
+ 
+ 
+     }
++
+ 
+     public String getTitle() {
+         System.out.println("title: " + title);
+@@ -206,4 +316,77 @@
+         stream = null;
+ 
+     }
++
++    //create the table
++    public void createLogInInfo(){
++        String currentQuery = "";
++        try{
++            //checks for connection
++            if(con != null){
++                Statement stmt = con.createStatement();
++                currentQuery = "DROP TABLE IF EXISTS LogIn; " +
++                        "CREATE TABLE LogIn(Username VARCHAR(50), Password VARCHAR(50), PRIMARY KEY(Username));";
++                stmt.executeUpdate(currentQuery);
++            }
++
++        }
++        catch (Exception e){
++            e.printStackTrace();
++        }
++    }
++
++    //looks for user
++    public Boolean lookForUser(String user){
++        String currentQ = "";
++        String currentUser = "";
++        try{
++
++            //check to see if there is connection
++            if (con != null) {
++                Statement stmt = con.createStatement();
++                currentQ += "SELECT Username FROM LogIn WHERE Username= '" + user + "'";
++                ResultSet result = stmt.executeQuery(currentQ);
++
++                //if there is a user then return true if user is found
++                while(result.next()){
++                    currentUser = result.getString("Username");
++                    if(currentUser == null){
++                        return false;
++                    }
++                    else{
++                        return true;
++                    }
++                }
++            }
++
++        }
++        catch(Exception e){
++            e.printStackTrace();
++        }
++        return false;
++    }
++
++    //checks to see if password and username match
++    public Boolean checkPass(String user, String pass){
++        String currentQ = "";
++        String currentUser = "";
++        try{
++            //makes sure there's a connection
++            if (con != null) {
++                Statement stmt = con.createStatement();
++                currentQ += "SELECT Username FROM LogIn WHERE Username= '" + user + "' AND Password= '" + pass + "'";
++                ResultSet result = stmt.executeQuery(currentQ);
++
++                //goes through the result
++                while(result.next()){
++                    return true;
++                }
++            }
++
++        }
++        catch(Exception e){
++            e.printStackTrace();
++        }
++        return false;
++    }
+ }
+\ No newline at end of file

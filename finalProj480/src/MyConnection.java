@@ -26,7 +26,7 @@ public class MyConnection {
         String MySQLURL = "jdbc:mysql://localhost:3306/tvShows?useSSL=false";
 
         // Get the current connection
-        URL path = MyConnection.class.getResource("connectInfo.txt");
+        URL path = MyConnection.class.getResource("login.txt");
 
         // File and Scanner objects
         File file = new File(path.getFile());
